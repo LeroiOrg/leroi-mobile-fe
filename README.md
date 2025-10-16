@@ -1,50 +1,64 @@
-# Welcome to your Expo app 👋
+# Leroi Mobile
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Bienvenido a Leroi Mobile, la aplicación móvil oficial de la plataforma Leroi. Este proyecto está construido con React Native y Expo, permitiendo un desarrollo rápido y multiplataforma para Android e iOS a partir de una única base de código.
 
-## Get started
+## Descripción General
 
-1. Install dependencies
+Leroi es una plataforma de aprendizaje diseñada para optimizar el estudio. La aplicación móvil permite a los usuarios:
 
-   ```bash
-   npm install
-   ```
+- Convertir documentos en rutas de aprendizaje personalizadas.
+- Gestionar y seguir su progreso en diferentes temas.
+- Acceder a sus planes de estudio desde cualquier lugar.
 
-2. Start the app
+## Primeros Pasos
 
-   ```bash
-   npx expo start
-   ```
+Para poner en marcha el entorno de desarrollo local, sigue estos pasos:
 
-In the output, you'll find options to open the app in a
+### 1. Instalar Dependencias
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+Asegúrate de tener Node.js instalado. Luego, desde la raíz del proyecto, instala todas las dependencias necesarias con npm:
 
 ```bash
-npm run reset-project
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### 2. Iniciar la Aplicación
 
-## Learn more
+Una vez instaladas las dependencias, puedes iniciar el servidor de desarrollo de Metro:
 
-To learn more about developing your project with Expo, look at the following resources:
+```bash
+npx expo start
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+Esto abrirá una terminal interactiva. Desde aquí, puedes elegir ejecutar la aplicación en:
 
-## Join the community
+- **Un emulador de Android:** Presiona `a`.
+- **Un simulador de iOS:** Presiona `i` (requiere macOS y Xcode).
+- **Tu propio dispositivo físico:** Escanea el código QR con la aplicación Expo Go.
 
-Join our community of developers creating universal apps.
+## Estructura de Carpetas
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+El proyecto sigue una estructura simple y organizada:
+
+- **/app**: Contiene todas las pantallas y rutas de la aplicación. Este proyecto utiliza el enrutamiento basado en archivos de Expo Router. Cada archivo `.tsx` dentro de esta carpeta se convierte en una ruta en la aplicación.
+    - **/(tabs)**: Es un grupo de rutas para la navegación principal por pestañas.
+    - **_layout.tsx**: Define el layout o plantilla principal de una sección.
+
+- **/assets**: Contiene todos los archivos estáticos como imágenes, fuentes y otros recursos multimedia.
+    - **/images**: Para archivos de imagen como PNG, JPG y GIF.
+
+- **/components**: (Opcional, recomendado) Carpeta para alojar componentes de React reutilizables (botones, tarjetas, etc.) que se usan en varias pantallas.
+
+## Scripts Disponibles
+
+- `npm run android`: Inicia la aplicación en un emulador de Android o un dispositivo conectado.
+- `npm run ios`: Inicia la aplicación en un simulador de iOS o un dispositivo conectado.
+- `npm run web`: Inicia la aplicación en un navegador web (para pruebas).
+
+## Aprende Más
+
+Para aprender más sobre las tecnologías utilizadas en este proyecto, consulta los siguientes recursos:
+
+- [Documentación de Expo](https://docs.expo.dev/)
+- [Documentación de React Native](https://reactnative.dev/docs/getting-started)
+- [Enrutamiento con Expo Router](https://docs.expo.dev/router/introduction/)
