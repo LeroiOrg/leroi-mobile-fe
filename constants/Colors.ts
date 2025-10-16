@@ -15,4 +15,10 @@ export const Colors = {
     tabIconDefault: '#9BA1A6',
     tabIconSelected: '#3b82f6',
   },
+  navbar: {
+    background: '#1a1a1a',
+    border: '#333',
+    text: '#fff',
+    primary: '#3b82f6',
+  }
 };

@@ -1,11 +1,10 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 
-export default function ExploreScreen() {
+export default function ProfileScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Explorar</Text>
-      <Text style={styles.subtitle}>Esta pantalla está en desarrollo</Text>
+      <Text style={styles.title}>Perfil</Text>
+      <Text style={styles.subtitle}>Tu información personal</Text>
     </View>
   );
 }
@@ -16,17 +15,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#0A0A0A',
-    padding: 20,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#FFFFFF',
-    marginBottom: 10,
+    marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
     color: '#A1A1AA',
-    textAlign: 'center',
   },
 });
