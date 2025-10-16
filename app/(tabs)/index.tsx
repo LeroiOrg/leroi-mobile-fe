@@ -1,8 +1,7 @@
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Link } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Image, ScrollView, Text, TouchableOpacity, View, SafeAreaView } from 'react-native';
 import { homeStyles as styles } from '../../styles/homeStyles';
 import Animated, {
   useAnimatedStyle,
@@ -140,7 +139,7 @@ const PricingCard: React.FC<PricingCardProps> = ({ title, price, features, credi
         <Text key={index} style={styles.listItem}>✔️ {feature}</Text>
       ))}
     </View>
-    <Link href="/(tabs)/explore" asChild>
+    <Link href="/(tabs)/credits" asChild>
       <TouchableOpacity style={styles.ctaButton}>
         <Text style={styles.ctaButtonText}>Comprar paquete</Text>
       </TouchableOpacity>
@@ -274,14 +273,15 @@ export default function HomeScreen() {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.scrollContainer}>
       {/* Hook Section */}
       <View style={styles.hookSection}>
           <Image source={gif} style={styles.hookGif} resizeMode="contain" />
           <FadeInText delay={200} style={styles.h1}>
             Convierte tus documentos en rutas de aprendizaje personalizadas
           </FadeInText>
-          <Link href={isAuthenticated ? "/(tabs)/explore" : "/(tabs)/explore"} asChild>
+          <Link href={isAuthenticated ? "/(tabs)/roadmap" : "/(tabs)/roadmap"} asChild>
             <TouchableOpacity style={styles.ctaButton}>
               <Text style={styles.ctaButtonText}>{isAuthenticated ? "Generar ruta de aprendizaje" : "Sube tu primer documento"}</Text>
             </TouchableOpacity>
@@ -348,6 +348,7 @@ export default function HomeScreen() {
             ))}
         </View>
       </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 }

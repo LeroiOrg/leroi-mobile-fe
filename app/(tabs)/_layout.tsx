@@ -18,8 +18,8 @@ export default function TabLayout() {
           backgroundColor: '#1a1a1a',
           borderTopColor: '#333',
           borderTopWidth: 1,
-          height: 60,
-          paddingBottom: 8,
+          height: 80,
+          paddingBottom: 24,
           paddingTop: 8,
         },
         headerShown: false,
@@ -34,10 +34,10 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="credits"
         options={{
           title: '',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="book.fill" color={color} />,
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="dollarsign.circle.fill" color={color} />,
         }}
       />
       <Tabs.Screen

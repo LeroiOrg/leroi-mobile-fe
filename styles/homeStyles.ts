@@ -8,6 +8,9 @@ export const homeStyles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
+  scrollContainer: {
+    flex: 1,
+  },
   // Sections
   hookSection: {
     alignItems: 'center',
