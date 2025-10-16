@@ -3,6 +3,7 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Font from 'expo-font';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
@@ -15,10 +16,20 @@ export const unstable_settings = {
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [isFirstLaunch, setIsFirstLaunch] = useState<boolean | null>(null);
+  const [fontsLoaded, setFontsLoaded] = useState(false);
 
   useEffect(() => {
+    loadFonts();
     checkFirstLaunch();
   }, []);
+
+  const loadFonts = async () => {
+    await Font.loadAsync({
+      'LexendDeca-Regular': require('../assets/fonts/LexendDeca-Regular.ttf'),
+      'LexendDeca-Bold': require('../assets/fonts/LexendDeca-Bold.ttf'),
+    });
+    setFontsLoaded(true);
+  };
 
   const checkFirstLaunch = async () => {
     try {
@@ -38,7 +49,7 @@ export default function RootLayout() {
     }
   };
 
-  if (isFirstLaunch === null) {
+  if (isFirstLaunch === null || !fontsLoaded) {
     return null; // Loading
   }
 

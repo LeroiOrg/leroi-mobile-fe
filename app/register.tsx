@@ -84,11 +84,7 @@ export default function RegisterScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={[styles.lightOrb, styles.orb1]} />
-      <View style={[styles.lightOrb, styles.orb2]} />
-      <View style={[styles.lightOrb, styles.orb3]} />
-      <View style={[styles.lightOrb, styles.orb4]} />
-      <View style={[styles.lightOrb, styles.orb5]} />
+
 
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
         <View style={styles.registerBox}>
@@ -302,13 +298,14 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 32,
-    fontWeight: '700',
+    fontFamily: 'LexendDeca-Bold',
     color: '#FFFFFF',
     textAlign: 'center',
     marginBottom: 4,
   },
   subtitle: {
     fontSize: 24,
+    fontFamily: 'LexendDeca-Regular',
     color: '#FFFFFF',
     textAlign: 'center',
     marginBottom: 32,
@@ -324,6 +321,7 @@ const styles = StyleSheet.create({
   label: {
     color: '#FFFFFF',
     fontSize: 14,
+    fontFamily: 'LexendDeca-Regular',
     marginBottom: 8,
   },
   input: {
@@ -333,6 +331,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     color: '#FFFFFF',
     fontSize: 16,
+    fontFamily: 'LexendDeca-Regular',
   },
   passwordWrapper: {
     position: 'relative',
@@ -370,10 +369,12 @@ const styles = StyleSheet.create({
   termsText: {
     color: '#FFFFFF',
     fontSize: 14,
+    fontFamily: 'LexendDeca-Regular',
     flex: 1,
   },
   termsLink: {
     color: '#6366f1',
+    fontFamily: 'LexendDeca-Regular',
   },
   haveAccount: {
     flexDirection: 'row',
@@ -384,10 +385,12 @@ const styles = StyleSheet.create({
   haveAccountText: {
     color: '#FFFFFF',
     fontSize: 14,
+    fontFamily: 'LexendDeca-Regular',
   },
   loginLink: {
     color: '#6366f1',
     fontSize: 14,
+    fontFamily: 'LexendDeca-Regular',
   },
   buttonContainer: {
     gap: 18,
@@ -401,7 +404,7 @@ const styles = StyleSheet.create({
   submitButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
-    fontWeight: '500',
+    fontFamily: 'LexendDeca-Bold',
   },
   googleButton: {
     backgroundColor: 'rgba(131, 91, 252, 0.43)',
@@ -419,36 +422,9 @@ const styles = StyleSheet.create({
   googleButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
-    fontWeight: '500',
+    fontFamily: 'LexendDeca-Bold',
   },
-  lightOrb: {
-    position: 'absolute',
-    width: 150,
-    height: 150,
-    backgroundColor: 'rgba(165, 113, 255, 0.3)',
-    borderRadius: 75,
-    opacity: 0.5,
-  },
-  orb1: {
-    top: '10%',
-    left: '10%',
-  },
-  orb2: {
-    top: '60%',
-    right: '10%',
-  },
-  orb3: {
-    bottom: '20%',
-    left: '20%',
-  },
-  orb4: {
-    bottom: '30%',
-    right: '40%',
-  },
-  orb5: {
-    top: '10%',
-    right: '20%',
-  },
+
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -467,18 +443,19 @@ const styles = StyleSheet.create({
   modalTitle: {
     color: '#FFFFFF',
     fontSize: 20,
-    fontWeight: '600',
+    fontFamily: 'LexendDeca-Bold',
     textAlign: 'center',
     marginBottom: 16,
   },
   modalText: {
     color: '#CCCCCC',
+    fontFamily: 'LexendDeca-Regular',
     textAlign: 'center',
     marginBottom: 8,
   },
   emailText: {
     color: '#835BFC',
-    fontWeight: '500',
+    fontFamily: 'LexendDeca-Bold',
     textAlign: 'center',
     marginBottom: 24,
   },
@@ -490,6 +467,7 @@ const styles = StyleSheet.create({
     padding: 16,
     color: '#FFFFFF',
     fontSize: 16,
+    fontFamily: 'LexendDeca-Regular',
     letterSpacing: 8,
     textAlign: 'center',
     marginBottom: 24,
@@ -507,7 +485,7 @@ const styles = StyleSheet.create({
   },
   cancelButtonText: {
     color: '#FFFFFF',
-    fontWeight: '500',
+    fontFamily: 'LexendDeca-Bold',
   },
   verifyButton: {
     flex: 1,
@@ -518,7 +496,7 @@ const styles = StyleSheet.create({
   },
   verifyButtonText: {
     color: '#FFFFFF',
-    fontWeight: '500',
+    fontFamily: 'LexendDeca-Bold',
   },
   termsScroll: {
     maxHeight: 200,
@@ -526,6 +504,7 @@ const styles = StyleSheet.create({
   },
   termsFullText: {
     color: '#CCCCCC',
+    fontFamily: 'LexendDeca-Regular',
     textAlign: 'justify',
     lineHeight: 20,
   },

@@ -430,10 +430,9 @@ const styles = StyleSheet.create({
 
   // Typography (using Lexend Deca font family)
   h1: {
-    color: colors.foreground, // Changed to white
+    fontFamily: 'LexendDeca-Bold',
+    color: colors.foreground,
     fontSize: 28,
-    fontFamily: 'Lexend Deca',
-    fontWeight: '700',
     textAlign: 'center',
     marginBottom: SPACING_XL,
     lineHeight: 36,
@@ -441,22 +440,20 @@ const styles = StyleSheet.create({
   h2: {
     textAlign: 'center',
     color: colors.foreground,
-    fontSize: 32, // 2rem
-    fontFamily: 'Lexend Deca',
-    fontWeight: '700',
+    fontSize: 32,
+    fontFamily: 'LexendDeca-Bold',
     marginBottom: 40,
   },
   h3: {
     color: colors.cardForeground,
-    fontSize: 24, // 1.5rem
-    fontFamily: 'Lexend Deca',
-    fontWeight: '600',
+    fontSize: 24,
+    fontFamily: 'LexendDeca-Bold',
+    textAlign: 'center',
     marginBottom: SPACING_MD,
   },
   h4: {
-    fontSize: 18, // ~1.1rem
-    fontFamily: 'Lexend Deca',
-    fontWeight: '600',
+    fontSize: 18,
+    fontFamily: 'LexendDeca-Bold',
     color: colors.cardForeground, 
     marginBottom: SPACING_SM,
   },
@@ -464,8 +461,7 @@ const styles = StyleSheet.create({
     marginHorizontal: SPACING_MD,
     marginBottom: 48,
     fontSize: 18,
-    fontFamily: 'Lexend Deca',
-    fontWeight: '400',
+    fontFamily: 'LexendDeca-Regular',
     color: colors.text,
     textAlign: 'center',
     lineHeight: 28,
@@ -488,8 +484,7 @@ const styles = StyleSheet.create({
   ctaButtonText: {
     color: colors.primaryForeground,
     fontSize: 16,
-    fontFamily: 'Lexend Deca',
-    fontWeight: '600',
+    fontFamily: 'LexendDeca-Bold',
     textAlign: 'center',
   },
 
@@ -522,9 +517,8 @@ const styles = StyleSheet.create({
   },
   cardText: {
     color: colors.cardForeground,
-    fontSize: 16, // 1rem
-    fontFamily: 'Lexend Deca',
-    fontWeight: '400',
+    fontSize: 16,
+    fontFamily: 'LexendDeca-Regular',
     textAlign: 'center',
     lineHeight: 24,
   },
@@ -551,9 +545,8 @@ const styles = StyleSheet.create({
     minHeight: 280,
   },
   price: {
-    fontSize: 40, // 2.5rem
-    fontFamily: 'Lexend Deca',
-    fontWeight: '700',
+    fontSize: 40,
+    fontFamily: 'LexendDeca-Bold',
     marginVertical: SPACING_SM,
     color: colors.cardForeground,
   },
@@ -563,9 +556,8 @@ const styles = StyleSheet.create({
     gap: SPACING_SM,
   },
   listItem: {
-    fontSize: 16, // 1rem
-    fontFamily: 'Lexend Deca',
-    fontWeight: '400',
+    fontSize: 16,
+    fontFamily: 'LexendDeca-Regular',
     color: colors.cardForeground,
   },
 
@@ -588,8 +580,7 @@ const styles = StyleSheet.create({
   },
   faqAnswer: {
     fontSize: 16,
-    fontFamily: 'Lexend Deca',
-    fontWeight: '400',
+    fontFamily: 'LexendDeca-Regular',
     color: colors.text,
     marginTop: SPACING_MD,
     lineHeight: 24,
@@ -607,7 +598,7 @@ const styles = StyleSheet.create({
   resetButtonText: {
     color: colors.hover,
     fontSize: 14,
-    fontWeight: '500',
+    fontFamily: 'LexendDeca-Regular',
     textAlign: 'center',
   },
 });

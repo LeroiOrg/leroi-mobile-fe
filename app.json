@@ -44,6 +44,9 @@
       "typedRoutes": true,
       "reactCompiler": true
     },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "extra": {
       "router": {},
       "eas": {
