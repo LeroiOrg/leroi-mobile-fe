@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Leroi_Mobile",
-    "slug": "Leroi_Mobile",
+    "slug": "leroi-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -43,6 +43,13 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "61be1e7d-b3d5-4e97-b310-cc4cf70ff53c"
+      }
+    },
+    "owner": "vanmo"
   }
 }
