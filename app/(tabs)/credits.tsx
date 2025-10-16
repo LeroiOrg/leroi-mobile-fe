@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
+import { router } from 'expo-router';
 import { creditsStyles as styles } from '../../styles/creditsStyles';
 
 interface PricingCardProps {
@@ -18,7 +19,13 @@ const PricingCard: React.FC<PricingCardProps> = ({ title, price, features, credi
         <Text key={index} style={styles.featureItem}>✔️ {feature}</Text>
       ))}
     </View>
-    <TouchableOpacity style={styles.buyButton}>
+    <TouchableOpacity 
+      style={styles.buyButton}
+      onPress={() => router.push({
+        pathname: '/pricing',
+        params: { credits: credits.toString() }
+      })}
+    >
       <Text style={styles.buyButtonText}>Comprar paquete</Text>
     </TouchableOpacity>
   </View>
