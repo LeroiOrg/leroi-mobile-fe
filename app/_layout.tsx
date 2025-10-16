@@ -3,7 +3,7 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Font from 'expo-font';
+import { useFonts } from 'expo-font';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
@@ -16,20 +16,17 @@ export const unstable_settings = {
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [isFirstLaunch, setIsFirstLaunch] = useState<boolean | null>(null);
-  const [fontsLoaded, setFontsLoaded] = useState(false);
+  
+  const [fontsLoaded] = useFonts({
+    'LexendDeca-Regular': require('../assets/fonts/LexendDeca-Regular.ttf'),
+    'LexendDeca-Medium': require('../assets/fonts/LexendDeca-Medium.ttf'),
+    'LexendDeca-SemiBold': require('../assets/fonts/LexendDeca-SemiBold.ttf'),
+    'LexendDeca-Bold': require('../assets/fonts/LexendDeca-Bold.ttf'),
+  });
 
   useEffect(() => {
-    loadFonts();
     checkFirstLaunch();
   }, []);
-
-  const loadFonts = async () => {
-    await Font.loadAsync({
-      'LexendDeca-Regular': require('../assets/fonts/LexendDeca-Regular.ttf'),
-      'LexendDeca-Bold': require('../assets/fonts/LexendDeca-Bold.ttf'),
-    });
-    setFontsLoaded(true);
-  };
 
   const checkFirstLaunch = async () => {
     try {
@@ -67,6 +64,7 @@ export default function RootLayout() {
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="register" options={{ headerShown: false }} />
+        <Stack.Screen name="login" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
       </Stack>
       <StatusBar style="light" />
