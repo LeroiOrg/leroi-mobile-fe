@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, SafeAreaView, Alert, Switch } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, SafeAreaView, Alert, Switch, Modal, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 import { profileStyles as styles } from '../../styles/profileStyles';
+import { storage } from '../../utils/storage';
+
+const API_BASE_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+const API_KEY = process.env.EXPO_PUBLIC_API_KEY;
 
 interface UserData {
   firstName: string;
@@ -16,84 +19,194 @@ interface UserData {
 
 export default function ProfileScreen() {
   const [userData, setUserData] = useState<UserData | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  // Datos simulados para desarrollo
-  const mockUserData: UserData = {
-    firstName: 'Juan',
-    lastName: 'Pérez',
-    email: 'juan.perez@ejemplo.com',
-    credits: 750,
-    roadmapsCreated: 5,
-    TFA_enabled: false
-  };
+  const [userRoadmaps, setUserRoadmaps] = useState([]);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [show2FAModal, setShow2FAModal] = useState(false);
+  const [new2FAStatus, setNew2FAStatus] = useState(false);
+  const [editData, setEditData] = useState({ firstName: '', lastName: '' });
 
   useEffect(() => {
     const fetchUserData = async () => {
+      const authToken = await storage.getToken();
+      
+      if (!authToken) {
+        router.replace('/login');
+        return;
+      }
+
       try {
-        // Simular carga de datos
-        setTimeout(() => {
-          setUserData(mockUserData);
-          setLoading(false);
-        }, 1000);
+        // Obtener los datos del usuario
+        const userResponse = await fetch(`${API_BASE_URL}/users_authentication_path/user-profile`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            "Content-Type": "application/json",
+            'x-api-key': API_KEY || ''
+          },
+        });
+
+        if (!userResponse.ok) {
+          throw new Error("Error al obtener los datos del usuario");
+        }
+
+        const userData = await userResponse.json();
         
-        // TODO: Implementar llamada real al backend
-        // const token = await AsyncStorage.getItem('token');
-        // if (!token) {
-        //   router.replace('/login');
-        //   return;
-        // }
-        // const response = await fetch(`${backendUrl}/users_authentication_path/user-profile`, {
-        //   headers: { Authorization: `Bearer ${token}` }
-        // });
-        // const data = await response.json();
-        // setUserData(data.data);
+        // Si el endpoint no devuelve el estado correcto de 2FA, usar el guardado localmente
+        const stored2FAStatus = await storage.get2FAStatus();
+        const userDataWithCorrect2FA = {
+          ...userData.data,
+          TFA_enabled: userData.data.TFA_enabled !== undefined ? userData.data.TFA_enabled : stored2FAStatus
+        };
+        
+        setUserData(userDataWithCorrect2FA);
+
+        // Obtener los roadmaps del usuario
+        const roadmapsResponse = await fetch(`${API_BASE_URL}/users_authentication_path/user-roadmaps`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            "Content-Type": "application/json",
+            'x-api-key': API_KEY || ''
+          },
+        });
+
+        if (!roadmapsResponse.ok) {
+          throw new Error("Error al obtener los roadmaps del usuario");
+        }
+
+        const roadmapsData = await roadmapsResponse.json();
+        setUserRoadmaps(roadmapsData.data);
+
       } catch (error) {
-        console.error('Error fetching user data:', error);
-        setLoading(false);
+        console.error(error);
+        router.replace('/login');
       }
     };
 
     fetchUserData();
   }, []);
 
-  const handleToggle2FA = (value: boolean) => {
-    Alert.alert(
-      'Autenticación de doble factor',
-      `¿Estás seguro de que deseas ${value ? 'activar' : 'desactivar'} la autenticación de doble factor?`,
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Confirmar',
-          onPress: () => {
-            setUserData(prev => prev ? { ...prev, TFA_enabled: value } : null);
-            Alert.alert('Éxito', `Autenticación de doble factor ${value ? 'activada' : 'desactivada'} correctamente.`);
-          }
-        }
-      ]
-    );
+  // Función para manejar el cambio en el checkbox de 2FA
+  const handleToggle2FA = (newStatus: boolean) => {
+    setNew2FAStatus(newStatus);
+    setShow2FAModal(true);
   };
 
-  const handleEditProfile = () => {
-    Alert.alert('Editar perfil', 'Función de edición en desarrollo');
+  // Función para confirmar el cambio de 2FA
+  const confirmToggle2FA = async () => {
+    try {
+      const authToken = await storage.getToken();
+      
+      const response = await fetch(`${API_BASE_URL}/users_authentication_path/update-2fa`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken}`,
+          'x-api-key': API_KEY || ''
+        },
+        body: JSON.stringify({ is_2fa_enabled: new2FAStatus }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Error al actualizar el estado de 2FA");
+      }
+
+      // Actualizar el estado local y guardado con el nuevo valor de 2FA
+      setUserData(prev => prev ? { ...prev, TFA_enabled: new2FAStatus } : null);
+      await storage.set2FAStatus(new2FAStatus);
+      Alert.alert('Éxito', `Autenticación de doble factor ${new2FAStatus ? "activada" : "desactivada"} correctamente.`);
+    } catch (error) {
+      console.error("Error:", error);
+      Alert.alert('Error', "Hubo un error al actualizar la autenticación de doble factor.");
+    } finally {
+      setShow2FAModal(false);
+    }
   };
 
-  const handleDeleteAccount = () => {
-    Alert.alert(
-      'Eliminar cuenta',
-      '¿Estás seguro de que deseas borrar tu cuenta? Esta acción no se puede deshacer, y perderás el saldo de créditos que tengas en la cuenta.',
-      [
-        { text: 'Cancelar', style: 'cancel' },
+  const handleDeleteAccount = async () => {
+    setShowConfirmModal(true);
+  };
+
+  const confirmDelete = async () => {
+    const authToken = await storage.getToken();
+    
+    if (!authToken) {
+      router.replace('/login');
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/users_authentication_path/delete-user/${encodeURIComponent(userData?.email || '')}`,
         {
-          text: 'Eliminar',
-          style: 'destructive',
-          onPress: () => {
-            Alert.alert('Cuenta eliminada', 'Tu cuenta ha sido eliminada correctamente');
-            // TODO: Implementar eliminación real y logout
-          }
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            "Content-Type": "application/json",
+            'x-api-key': API_KEY || ''
+          },
         }
-      ]
-    );
+      );
+
+      if (!response.ok) {
+        let errorMsg = "Error al borrar la cuenta";
+        try {
+          const errorData = await response.json();
+          errorMsg = errorData.detail || errorMsg;
+        } catch {}
+        Alert.alert('Error', errorMsg);
+        return;
+      }
+
+      Alert.alert('Éxito', "Cuenta eliminada correctamente");
+      setTimeout(async () => {
+        await storage.removeToken();
+        router.replace('/login');
+      }, 2000);
+    } catch (error) {
+      console.error("Error al borrar la cuenta:", error);
+      Alert.alert('Error', "Hubo un error al intentar borrar la cuenta.");
+    } finally {
+      setShowConfirmModal(false);
+    }
+  };
+
+  const handleSave = async () => {
+    const trimmedData = {
+      name: editData.firstName.trim(),
+      last_name: editData.lastName.trim(),
+      email: userData?.email?.trim(),
+      provider: 'default'
+    };
+
+    try {
+      const authToken = await storage.getToken();
+      
+      const response = await fetch(`${API_BASE_URL}/users_authentication_path/update-user`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken}`,
+          'x-api-key': API_KEY || ''
+        },
+        body: JSON.stringify(trimmedData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        Alert.alert('Error', result.detail || "Error al actualizar los datos");
+        return;
+      }
+
+      Alert.alert('Éxito', "Datos actualizados correctamente");
+      setUserData(prev => prev ? { ...prev, firstName: editData.firstName, lastName: editData.lastName } : null);
+      setShowEditModal(false);
+    } catch (error) {
+      console.error("Error:", error);
+      Alert.alert('Error', 'Error al actualizar los datos');
+    }
   };
 
   const handleLogout = async () => {
@@ -105,7 +218,9 @@ export default function ProfileScreen() {
         {
           text: 'Cerrar sesión',
           onPress: async () => {
-            await AsyncStorage.removeItem('token');
+            await storage.removeToken();
+            await storage.removeUserEmail();
+            await storage.remove2FAStatus();
             router.replace('/login');
           }
         }
@@ -113,12 +228,7 @@ export default function ProfileScreen() {
     );
   };
 
-  const handleViewRoadmaps = () => {
-    Alert.alert('Roadmaps', 'Navegando a roadmaps creados...');
-    // TODO: Navegar a pantalla de roadmaps creados
-  };
-
-  if (loading) {
+  if (!userData) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.loadingContainer}>
@@ -128,19 +238,13 @@ export default function ProfileScreen() {
     );
   }
 
-  if (!userData) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>Error al cargar los datos del usuario</Text>
-        </View>
-      </SafeAreaView>
-    );
-  }
-
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollContainer}>
+      <KeyboardAvoidingView 
+        style={{ flex: 1 }} 
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <ScrollView style={styles.scrollContainer} keyboardShouldPersistTaps="handled">
         {/* Header */}
         <View style={styles.header}>
           <Text style={styles.title}>Mi perfil</Text>
@@ -182,7 +286,7 @@ export default function ProfileScreen() {
             <Ionicons name="card-outline" size={24} color="#835BFC" />
             <Text style={styles.cardTitle}>Saldo de créditos</Text>
           </View>
-          <Text style={styles.creditsAmount}>{userData.credits}</Text>
+          <Text style={styles.creditsAmount}>${userData.credits}</Text>
         </View>
 
         {/* Roadmaps Creados */}
@@ -196,7 +300,7 @@ export default function ProfileScreen() {
           </View>
           
           {userData.roadmapsCreated > 0 && (
-            <TouchableOpacity style={styles.viewRoadmapsButton} onPress={handleViewRoadmaps}>
+            <TouchableOpacity style={styles.viewRoadmapsButton}>
               <Text style={styles.viewRoadmapsButtonText}>Ver Roadmaps</Text>
             </TouchableOpacity>
           )}
@@ -230,7 +334,13 @@ export default function ProfileScreen() {
             <Text style={styles.cardTitle}>Acciones de cuenta</Text>
           </View>
           
-          <TouchableOpacity style={styles.actionButton} onPress={handleEditProfile}>
+          <TouchableOpacity 
+            style={styles.actionButton} 
+            onPress={() => {
+              setEditData({ firstName: userData.firstName, lastName: userData.lastName });
+              setShowEditModal(true);
+            }}
+          >
             <Ionicons name="create-outline" size={20} color="#835BFC" />
             <Text style={styles.actionButtonText}>Modificar datos</Text>
             <Ionicons name="chevron-forward" size={20} color="#A1A1AA" />
@@ -243,20 +353,6 @@ export default function ProfileScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Quiénes somos */}
-        <View style={styles.card}>
-          <View style={styles.cardHeader}>
-            <Ionicons name="information-circle-outline" size={24} color="#835BFC" />
-            <Text style={styles.cardTitle}>Información</Text>
-          </View>
-          
-          <TouchableOpacity style={styles.actionButton} onPress={() => router.push('/about')}>
-            <Ionicons name="people-outline" size={20} color="#835BFC" />
-            <Text style={styles.actionButtonText}>Quiénes somos</Text>
-            <Ionicons name="chevron-forward" size={20} color="#A1A1AA" />
-          </TouchableOpacity>
-        </View>
-
         {/* Cerrar Sesión */}
         <View style={styles.card}>
           <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
@@ -265,6 +361,102 @@ export default function ProfileScreen() {
           </TouchableOpacity>
         </View>
       </ScrollView>
+
+      {/* Modal de Confirmación para Eliminar Cuenta */}
+      <Modal visible={showConfirmModal} transparent animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Eliminar cuenta</Text>
+            <Text style={styles.modalText}>
+              ¿Estás seguro de que deseas borrar tu cuenta? Esta acción no se puede deshacer, y perderás el saldo de créditos que tengas en la cuenta.
+            </Text>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity style={styles.cancelButton} onPress={() => setShowConfirmModal(false)}>
+                <Text style={styles.cancelButtonText}>Cancelar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.confirmButton} onPress={confirmDelete}>
+                <Text style={styles.confirmButtonText}>Eliminar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Modal de Edición */}
+      <Modal visible={showEditModal} transparent animationType="slide">
+        <KeyboardAvoidingView 
+          style={{ flex: 1 }} 
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.editModalContent}>
+              <View style={styles.editModalHeader}>
+                <Text style={styles.editModalTitle}>Editar datos</Text>
+                <TouchableOpacity 
+                  style={styles.closeButton} 
+                  onPress={() => setShowEditModal(false)}
+                >
+                  <Ionicons name="close" size={24} color="#fff" />
+                </TouchableOpacity>
+              </View>
+              
+              <View style={styles.editForm}>
+                <View style={styles.editInputGroup}>
+                  <Text style={styles.editInputLabel}>Nombre</Text>
+                  <TextInput
+                    style={styles.editInput}
+                    value={editData.firstName}
+                    onChangeText={(text) => setEditData(prev => ({ ...prev, firstName: text }))}
+                    placeholder="Ingresa tu nombre"
+                    placeholderTextColor="rgba(255, 255, 255, 0.5)"
+                  />
+                </View>
+                
+                <View style={styles.editInputGroup}>
+                  <Text style={styles.editInputLabel}>Apellido</Text>
+                  <TextInput
+                    style={styles.editInput}
+                    value={editData.lastName}
+                    onChangeText={(text) => setEditData(prev => ({ ...prev, lastName: text }))}
+                    placeholder="Ingresa tu apellido"
+                    placeholderTextColor="rgba(255, 255, 255, 0.5)"
+                  />
+                </View>
+              </View>
+              
+              <View style={styles.editModalButtons}>
+                <TouchableOpacity style={styles.editSaveButton} onPress={handleSave}>
+                  <Text style={styles.editSaveButtonText}>Guardar cambios</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.editCancelButton} onPress={() => setShowEditModal(false)}>
+                  <Text style={styles.editCancelButtonText}>Cancelar</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
+
+      {/* Modal de Confirmación para 2FA */}
+      <Modal visible={show2FAModal} transparent animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Autenticación de doble factor</Text>
+            <Text style={styles.modalText}>
+              ¿Estás seguro de que deseas {new2FAStatus ? "activar" : "desactivar"} la autenticación de doble factor?
+            </Text>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity style={styles.cancelButton} onPress={() => setShow2FAModal(false)}>
+                <Text style={styles.cancelButtonText}>Cancelar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.confirmButton} onPress={confirmToggle2FA}>
+                <Text style={styles.confirmButtonText}>Confirmar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }

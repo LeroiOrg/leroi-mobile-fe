@@ -54,6 +54,7 @@ export const registerStyles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
     fontFamily: 'LexendDeca-Regular',
+    letterSpacing: 0,
   },
   passwordWrapper: {
     position: 'relative',
@@ -218,6 +219,18 @@ export const registerStyles = StyleSheet.create({
   verifyButtonText: {
     color: '#FFFFFF',
     fontFamily: 'LexendDeca-Medium',
+  },
+  forgotPasswordInput: {
+    backgroundColor: '#2a2a2a',
+    borderWidth: 1,
+    borderColor: '#835BFC',
+    borderRadius: 8,
+    padding: 16,
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontFamily: 'LexendDeca-Regular',
+    textAlign: 'left',
+    marginBottom: 24,
   },
   termsScroll: {
     maxHeight: 200,

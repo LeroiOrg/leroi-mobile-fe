@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, TextInput, ScrollView, Alert, Modal, Image } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, ScrollView, Alert, Modal, Image, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { registerStyles as styles } from '../styles/registerStyles';
+
+const API_BASE_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+const API_KEY = process.env.EXPO_PUBLIC_API_KEY;
 
 export default function RegisterScreen() {
   const router = useRouter();
@@ -16,10 +19,13 @@ export default function RegisterScreen() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showVerificationModal, setShowVerificationModal] = useState(false);
   const [verificationCode, setVerificationCode] = useState('');
+  const [userInputCode, setUserInputCode] = useState('');
   const [userEmail, setUserEmail] = useState('');
+  const [isSubmittingCode, setIsSubmittingCode] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
 
   const handleChange = (name: string, value: string | boolean) => {
@@ -27,6 +33,40 @@ export default function RegisterScreen() {
       ...prev,
       [name]: value
     }));
+  };
+
+  // Función auxiliar para generar un código de verificación
+  const generateVerificationCode = () => {
+    return Math.random().toString(36).substring(2, 8).toUpperCase();
+  };
+
+  // Función para enviar el correo de verificación
+  const sendVerificationEmail = async (email: string, code: string) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/users_authentication_path/send-verification`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': API_KEY || ''
+        },
+        body: JSON.stringify({
+          email: email,
+          code: code
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Error al enviar el código de verificación');
+      }
+
+      const data = await response.json();
+      return data;
+
+    } catch (error) {
+      console.error('Error al enviar el email:', error);
+      throw error;
+    }
   };
 
   const validateForm = () => {
@@ -61,33 +101,117 @@ export default function RegisterScreen() {
     return true;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (validateForm()) {
       setIsSubmitting(true);
-      setTimeout(() => {
+      try {
+        const emailCheckResponse = await fetch(`${API_BASE_URL}/users_authentication_path/check-email`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': API_KEY || ''
+          },
+          body: JSON.stringify({ email: formData.email }),
+        });
+
+        if (!emailCheckResponse.ok) {
+          const errorData = await emailCheckResponse.json();
+          throw new Error(errorData.detail || 'Error al verificar el correo electrónico');
+        }
+
+        const emailCheckData = await emailCheckResponse.json();
+        if (emailCheckData.exists) {
+          Alert.alert('Error', 'Este correo electrónico ya está registrado');
+          return;
+        }
+
+        const code = generateVerificationCode();
         setUserEmail(formData.email);
+
+        await sendVerificationEmail(formData.email, code);
+
+        setVerificationCode(code);
         setShowVerificationModal(true);
-        setIsSubmitting(false);
+        
         Alert.alert('Éxito', 'Código de verificación enviado a tu correo');
-      }, 1000);
+      } catch (error) {
+        Alert.alert('Error', 'Error al enviar el código de verificación');
+        console.error('Error al enviar el código de verificación:', error);
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
 
-  const handleVerifyCode = () => {
-    if (verificationCode.length === 6) {
-      setShowVerificationModal(false);
-      Alert.alert('Éxito', 'Registro completado exitosamente');
-      router.push('/(tabs)');
-    } else {
-      Alert.alert('Error', 'Código de verificación incorrecto');
+  const handleVerifyCode = async () => {
+    try {
+      setIsSubmittingCode(true);
+      const response = await fetch(`${API_BASE_URL}/users_authentication_path/verify-code`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': API_KEY || ''
+        },
+        body: JSON.stringify({ email: userEmail, code: userInputCode })
+      });
+
+      if (response.ok) {
+        Alert.alert('Éxito', 'Código de verificación correcto');
+        setShowVerificationModal(false);
+        await handleRegister();
+      } else {
+        const errorData = await response.json();
+        Alert.alert('Error', errorData.detail || 'Código de verificación incorrecto o expirado');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Error al verificar el código');
+      console.error('Error al verificar el código:', error);
+    } finally {
+      setIsSubmittingCode(false);
     }
+  };
+
+  const handleRegister = async () => {
+    const userData = {
+      name: formData.nombres,
+      last_name: formData.apellidos,
+      email: formData.email,
+      password: formData.contraseña,
+      provider: 'email'
+    };
+    try {
+      const response = await fetch(`${API_BASE_URL}/users_authentication_path/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': API_KEY || ''
+        },
+        body: JSON.stringify(userData)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Error al registrar el usuario');
+      }
+      router.push('/login');
+
+    } catch (error) {
+      console.error('Error al registrar el usuario:', error);
+      throw error;
+    }
+  };
+
+  const handleGoogleSignup = async () => {
+    Alert.alert('Próximamente', 'Google Sign-In estará disponible en la próxima versión');
   };
 
   return (
     <View style={styles.container}>
-
-
-      <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+      <KeyboardAvoidingView 
+        style={{ flex: 1 }} 
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
         <View style={styles.registerBox}>
           <Text style={styles.title}>Regístrate</Text>
           <Text style={styles.subtitle}>Ingresa tus datos</Text>
@@ -217,20 +341,31 @@ export default function RegisterScreen() {
               </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.googleButton}>
+            <TouchableOpacity
+              style={styles.googleButton}
+              onPress={handleGoogleSignup}
+              disabled={isLoading}
+            >
               <Image
                 source={require('../assets/images/google.png')}
                 style={styles.googleIcon}
               />
-              <Text style={styles.googleButtonText}>Regístrate con Google</Text>
+              <Text style={styles.googleButtonText}>
+                {isLoading ? 'Cargando...' : 'Regístrate con Google'}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
 
       <Modal visible={showVerificationModal} transparent animationType="fade">
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
+        <KeyboardAvoidingView 
+          style={{ flex: 1 }} 
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Verifica tu correo</Text>
             <Text style={styles.modalText}>Enviamos un código de verificación a:</Text>
             <Text style={styles.emailText}>{userEmail}</Text>
@@ -239,8 +374,9 @@ export default function RegisterScreen() {
               placeholder="* * * * * *"
               placeholderTextColor="rgba(255, 255, 255, 0.5)"
               maxLength={6}
-              value={verificationCode}
-              onChangeText={setVerificationCode}
+              value={userInputCode}
+              onChangeText={setUserInputCode}
+              editable={!isSubmittingCode}
             />
             <View style={styles.modalButtons}>
               <TouchableOpacity
@@ -249,12 +385,19 @@ export default function RegisterScreen() {
               >
                 <Text style={styles.cancelButtonText}>Cancelar</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.verifyButton} onPress={handleVerifyCode}>
-                <Text style={styles.verifyButtonText}>Verificar</Text>
+              <TouchableOpacity
+                style={styles.verifyButton}
+                onPress={handleVerifyCode}
+                disabled={isSubmittingCode}
+              >
+                <Text style={styles.verifyButtonText}>
+                  {isSubmittingCode ? 'Verificando...' : 'Verificar'}
+                </Text>
               </TouchableOpacity>
             </View>
+            </View>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
 
       <Modal visible={showTermsModal} transparent animationType="fade">
@@ -263,7 +406,11 @@ export default function RegisterScreen() {
             <Text style={styles.modalTitle}>Términos y condiciones</Text>
             <ScrollView style={styles.termsScroll}>
               <Text style={styles.termsFullText}>
-                LEROI es una plataforma web diseñada para generar rutas de aprendizaje personalizadas a partir de documentos cargados por los usuarios, quienes son totalmente responsables del contenido que suben y de su uso, debiendo cumplir con todas las leyes y regulaciones aplicables. LEROI en ningún caso se hace responsable del uso indebido de la plataforma, incluyendo, pero no limitado a, la generación, difusión o acceso a información que incite o facilite actividades ilegales, peligrosas o que atenten contra la seguridad pública. La plataforma y sus contenidos son propiedad de LEROI, y su uso indebido está prohibido. LEROI no se hace responsable por daños indirectos derivados del uso de la plataforma. LEROI puede modificar los servicios o los términos en cualquier momento, notificando a los usuarios registrados.
+                LEROI es una plataforma web diseñada para generar rutas de aprendizaje personalizadas a partir de documentos cargados por los usuarios, 
+                quienes son totalmente responsables del contenido que suben y de su uso, debiendo cumplir con todas las leyes y regulaciones aplicables. LEROI en ningún caso se hace responsable del uso indebido de la plataforma, incluyendo, pero no limitado a, la generación, difusión o acceso a información que incite o facilite actividades ilegales, peligrosas o que atenten contra la seguridad pública.
+                La plataforma y sus contenidos son propiedad de LEROI, y su uso indebido está prohibido. 
+                LEROI no se hace responsable por daños indirectos derivados del uso de la plataforma. 
+                LEROI puede modificar los servicios o los términos en cualquier momento, notificando a los usuarios registrados.
               </Text>
             </ScrollView>
             <TouchableOpacity
@@ -278,4 +425,3 @@ export default function RegisterScreen() {
     </View>
   );
 }
-

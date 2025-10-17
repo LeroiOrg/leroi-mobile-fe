@@ -8,7 +8,7 @@ export function ThemeToggle() {
 
   const toggleTheme = () => {
     setIsDark(!isDark);
-    // Aquí puedes agregar la lógica para cambiar el tema de la app
+    // Agregar la lógica para cambiar el tema de la app
   };
 
   return (

@@ -213,4 +213,174 @@ export const profileStyles = StyleSheet.create({
     color: '#f44336',
     marginLeft: SPACING.sm,
   },
+
+  // Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  modalContent: {
+    backgroundColor: 'rgba(30, 31, 38, 0.95)',
+    borderRadius: 16,
+    padding: 24,
+    margin: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(131, 91, 252, 0.3)',
+    minWidth: 300,
+  },
+
+  modalTitle: {
+    fontSize: 18,
+    fontFamily: FONTS.bold,
+    color: '#fff',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+
+  modalText: {
+    fontSize: 16,
+    fontFamily: FONTS.regular,
+    color: 'rgba(255, 255, 255, 0.9)',
+    marginBottom: 24,
+    textAlign: 'center',
+    lineHeight: 22,
+  },
+
+  modalButtons: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+
+  cancelButton: {
+    flex: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 8,
+    padding: 12,
+    alignItems: 'center',
+  },
+
+  cancelButtonText: {
+    color: '#fff',
+    fontFamily: FONTS.semiBold,
+  },
+
+  confirmButton: {
+    flex: 1,
+    backgroundColor: '#f44336',
+    borderRadius: 8,
+    padding: 12,
+    alignItems: 'center',
+  },
+
+  confirmButtonText: {
+    color: '#fff',
+    fontFamily: FONTS.semiBold,
+  },
+
+  // Edit Modal Styles
+  editModalContent: {
+    backgroundColor: 'rgba(30, 31, 38, 0.98)',
+    borderRadius: 20,
+    padding: 0,
+    margin: 20,
+    maxHeight: '80%',
+    width: '90%',
+    maxWidth: 400,
+    borderWidth: 1,
+    borderColor: 'rgba(131, 91, 252, 0.3)',
+  },
+
+  editModalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 24,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(131, 91, 252, 0.2)',
+  },
+
+  editModalTitle: {
+    fontSize: 20,
+    fontFamily: FONTS.bold,
+    color: '#fff',
+  },
+
+  closeButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  editForm: {
+    padding: 24,
+  },
+
+  editInputGroup: {
+    marginBottom: 20,
+  },
+
+  editInputLabel: {
+    fontSize: 14,
+    fontFamily: FONTS.medium,
+    color: '#fff',
+    marginBottom: 8,
+  },
+
+  editInput: {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 12,
+    padding: 16,
+    fontSize: 16,
+    fontFamily: FONTS.regular,
+    color: '#fff',
+    borderWidth: 1,
+    borderColor: 'rgba(131, 91, 252, 0.3)',
+  },
+
+  editModalButtons: {
+    flexDirection: 'row',
+    padding: 24,
+    paddingTop: 0,
+    gap: 12,
+  },
+
+  editCancelButton: {
+    flex: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 12,
+    padding: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+  },
+
+  editCancelButtonText: {
+    color: '#fff',
+    fontFamily: FONTS.semiBold,
+    fontSize: 16,
+    textAlign: 'center',
+  },
+
+  editSaveButton: {
+    flex: 1,
+    backgroundColor: '#835BFC',
+    borderRadius: 12,
+    padding: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  editSaveButtonText: {
+    color: '#fff',
+    fontFamily: FONTS.semiBold,
+    fontSize: 16,
+    textAlign: 'center',
+  },
 });

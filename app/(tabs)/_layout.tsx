@@ -5,12 +5,14 @@ import { HapticTab } from '@/components/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import ProtectedRoute from '@/components/ProtectedRoute';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <Tabs
+    <ProtectedRoute>
+      <Tabs
       screenOptions={{
         tabBarActiveTintColor: '#835BFC',
         tabBarInactiveTintColor: '#A1A1AA',
@@ -54,6 +56,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.fill" color={color} />,
         }}
       />
-    </Tabs>
+      </Tabs>
+    </ProtectedRoute>
   );
 }
