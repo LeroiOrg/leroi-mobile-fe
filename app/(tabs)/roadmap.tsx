@@ -3,6 +3,13 @@ import { View, Text, TouchableOpacity, ScrollView, Alert, Modal, Image, Animated
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { roadmapStyles as styles } from '../../styles/roadmapStyles';
+import * as DocumentPicker from 'expo-document-picker';
+import { storage } from '../../utils/storage';
+
+const API_KEY = process.env.EXPO_PUBLIC_API_KEY;
+const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+const PREPROCESSING_URL = process.env.EXPO_PUBLIC_PAYMENT_BE;
+const LEARNING_URL = 'https://learning-path-be-1074530412091.us-east1.run.app';
 
 export default function RoadmapScreen() {
   const [fileUploaded, setFileUploaded] = useState(null);
@@ -16,6 +23,8 @@ export default function RoadmapScreen() {
   const [showLoadingModal, setShowLoadingModal] = useState(false);
   const [loadingText, setLoadingText] = useState('');
   const [showHelpModal, setShowHelpModal] = useState(false);
+  const [userData, setUserData] = useState(null);
+  const [fileData, setFileData] = useState(null);
   const spinValue = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -41,15 +50,167 @@ export default function RoadmapScreen() {
     outputRange: ['0deg', '360deg'],
   });
 
-  const handleFileUpload = () => {
-    setFileUploaded({
-      name: 'documento-ejemplo.pdf',
-      size: 2.5 * 1024 * 1024
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const authToken = await storage.getToken();
+      if (!authToken) {
+        router.push('/login');
+        return;
+      }
+
+      try {
+        const userResponse = await fetch(`${BACKEND_URL}/users_authentication_path/user-profile`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            'Content-Type': 'application/json',
+            'x-api-key': API_KEY
+          },
+        });
+
+        if (!userResponse.ok) {
+          throw new Error('Error al obtener los datos del usuario');
+        }
+
+        const userData = await userResponse.json();
+        setUserData(userData.data);
+      } catch (error) {
+        console.error(error);
+        router.push('/login');
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  const convertToBase64 = (uri) => {
+    return new Promise((resolve, reject) => {
+      fetch(uri)
+        .then(response => response.blob())
+        .then(blob => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const base64String = reader.result;
+            const base64Data = base64String.split(',')[1];
+            resolve(base64Data);
+          };
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        })
+        .catch(reject);
     });
-    setPreviewCost('Costo: 5 Créditos');
-    setUserCredits('Actualmente tienes 100 créditos');
-    setCanUserPay(false);
-    setShowFileInfo(true);
+  };
+
+  const getEmailFromToken = (token) => {
+    try {
+      if (!token) return null;
+      const parts = token.split('.');
+      if (parts.length !== 3) return null;
+
+      const base64Url = parts[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const padded = base64 + '==='.slice((base64.length + 3) % 4);
+
+      const payload = JSON.parse(atob(padded));
+      return payload.email || payload.sub || null;
+    } catch {
+      return null;
+    }
+  };
+
+  const handleFileUpload = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: 'application/pdf',
+        copyToCacheDirectory: true,
+      });
+
+      if (result.canceled) return;
+
+      const file = result.assets[0];
+      const maxSize = 50 * 1024 * 1024;
+
+      if (file.size > maxSize) {
+        Alert.alert('Error', '¡El archivo supera nuestras capacidades de procesamiento! Prueba eliminando algunas páginas o imágenes del archivo...');
+        return;
+      }
+
+      setShowLoadingModal(true);
+      setLoadingText('Cargando documento 🧐');
+      setFileUploaded(file);
+
+      const base64Data = await convertToBase64(file.uri);
+      const authToken = await storage.getToken();
+      const email = getEmailFromToken(authToken);
+
+      if (!email) {
+        Alert.alert('Error', 'No se pudo obtener el correo del usuario.');
+        return;
+      }
+
+      const dataToSend = {
+        fileName: file.name,
+        fileType: file.mimeType,
+        fileSize: file.size,
+        fileBase64: base64Data,
+      };
+
+      setFileData(dataToSend);
+
+      // Get cost estimate
+      const previewResponse = await fetch(`${PREPROCESSING_URL}/files/cost-estimates`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+          'x-api-key': API_KEY
+        },
+        body: JSON.stringify(dataToSend),
+      });
+
+      if (!previewResponse.ok) {
+        throw new Error('Error al obtener la vista previa de costos');
+      }
+
+      const previewResult = await previewResponse.json();
+      const credits_cost = previewResult.credits_cost || 1;
+      const user_credits = userData?.credits || 0;
+
+      setPreviewCost(`Costo: ${credits_cost.toLocaleString()} Créditos`);
+      setUserCredits(`Actualmente tienes ${user_credits.toLocaleString()} créditos`);
+      setCanUserPay(credits_cost > user_credits);
+      setShowFileInfo(true);
+
+      if (credits_cost > user_credits) {
+        Alert.alert('Error', 'Créditos Insuficientes 😔');
+      }
+
+      // Analyze file for virus
+      fetch(`${PREPROCESSING_URL}/files/analyses`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dataToSend),
+      })
+      .then(response => response.json())
+      .then(result => {
+        if (result.has_virus) {
+          Alert.alert('Error', 'El archivo contiene virus. El usuario ha sido eliminado.');
+        }
+      })
+      .catch(error => {
+        console.error('Error al analizar el archivo:', error);
+      });
+
+    } catch (error) {
+      console.error('Error al obtener la vista previa de costos:', error);
+      Alert.alert('Error', 'Error al obtener el costo de procesamiento');
+    } finally {
+      setShowLoadingModal(false);
+      setLoadingText('');
+    }
   };
 
   const handleReset = () => {
@@ -59,35 +220,165 @@ export default function RoadmapScreen() {
     setUserCredits('Cargando...');
   };
 
-  const handleGenerateRoadmap = () => {
+  const handleGenerateRoadmap = async () => {
+    if (!fileData) {
+      Alert.alert('Error', 'No has subido ningún archivo');
+      return;
+    }
+
     setShowFileInfo(false);
     setShowLoadingModal(true);
     setLoadingText('Buscando temas relacionados... 📈🧠📚');
-    
-    setTimeout(() => {
-      setShowLoadingModal(false);
-      setTopics([
-        'Programación en Python',
-        'Algoritmos y Estructuras de Datos',
-        'Bases de Datos SQL',
-        'Desarrollo Web'
-      ]);
+
+    try {
+      const authToken = await storage.getToken();
+      const processResponse = await fetch(`${LEARNING_URL}/learning_path/documents`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+          'x-api-key': API_KEY
+        },
+        body: JSON.stringify(fileData),
+      });
+
+      if (!processResponse.ok) {
+        Alert.alert('Error', 'No puedes generar rutas de aprendizaje de temas sensibles');
+        const errorData = await processResponse.json();
+        throw new Error(errorData.detail);
+      }
+
+      const result = await processResponse.json();
+      setTopics(result.themes);
       setShowTopicsModal(true);
-    }, 800);
+
+    } catch (error) {
+      console.error('Error en el proceso de IA:', error);
+      Alert.alert('Error', 'Error al enviar los datos al backend');
+    } finally {
+      setShowLoadingModal(false);
+      setLoadingText('');
+    }
   };
 
-  const handleTopicSelect = (topic) => {
+  const updateUserCredits = async (amount) => {
+    try {
+      const authToken = await storage.getToken();
+      const response = await fetch(`${BACKEND_URL}/users_authentication_path/user-credits/${encodeURIComponent(userData.email)}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`,
+          'x-api-key': API_KEY
+        },
+        body: JSON.stringify({ amount }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al actualizar los créditos del usuario');
+      }
+
+      setUserData(prev => ({ ...prev, credits: prev.credits + amount }));
+    } catch (error) {
+      console.error('Error al actualizar créditos:', error);
+    }
+  };
+
+  const extractJSON = (str) => {
+    if (!str) {
+      console.error('String vacío recibido');
+      return null;
+    }
+    
+    if (typeof str === 'object') {
+      return str;
+    }
+    
+    let cleaned = str.trim();
+    cleaned = cleaned.replace(/^```(?:json|python|javascript|py)?\s*/i, '');
+    cleaned = cleaned.replace(/```\s*$/g, '');
+    
+    const firstBrace = cleaned.indexOf('{');
+    const lastBrace = cleaned.lastIndexOf('}');
+    
+    if (firstBrace === -1 || lastBrace === -1) {
+      console.error('No se encontraron llaves {} en el string');
+      return null;
+    }
+    
+    cleaned = cleaned.substring(firstBrace, lastBrace + 1);
+    
+    try {
+      return JSON.parse(cleaned);
+    } catch (e) {
+      console.error('Error al parsear JSON:', e);
+      return null;
+    }
+  };
+
+  const handleTopicSelect = async (topic) => {
     setShowTopicsModal(false);
     setShowLoadingModal(true);
     setLoadingText('Estamos creando tu ruta de aprendizaje 😁');
     
-    setTimeout(() => {
-      setShowLoadingModal(false);
+    try {
+      const authToken = await storage.getToken();
+      const response = await fetch(`${LEARNING_URL}/learning_path/roadmaps`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`,
+          'x-api-key': API_KEY
+        },
+        body: JSON.stringify({ topic }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al enviar el topic al backend');
+      }
+
+      const result = await response.json();
+      
+      const parseResult = extractJSON(result.roadmap);
+      if (!parseResult) {
+        throw new Error('No se pudo parsear el roadmap');
+      }
+      
+      const parseSecondResult = extractJSON(result.extra_info);
+      if (!parseSecondResult) {
+        throw new Error('No se pudo parsear extra_info');
+      }
+
+      await updateUserCredits(-1);
+
+      const relatedTopics = [
+        'Programación en Python',
+        'Algoritmos y Estructuras de Datos',
+        'Bases de Datos SQL',
+        'Redes de Computadores'
+      ];
+      
       router.push({
         pathname: '/generated-roadmap',
-        params: { topic }
+        params: {
+          roadmapTopics: JSON.stringify(parseResult),
+          roadmapInfo: JSON.stringify(parseSecondResult),
+          relatedTopics: JSON.stringify(relatedTopics)
+        }
       });
-    }, 1200);
+      
+    } catch (error) {
+      console.error('Error detallado al generar la ruta:', error);
+      
+      if (error instanceof SyntaxError) {
+        Alert.alert('Error', 'Error al procesar la respuesta del servidor. El formato no es válido.');
+      } else {
+        Alert.alert('Error', 'No pudimos generar tu ruta de aprendizaje 😔');
+      }
+    } finally {
+      setShowLoadingModal(false);
+      setLoadingText('');
+    }
   };
 
   return (

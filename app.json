@@ -7,7 +7,6 @@
     "icon": "./assets/images/icon.png",
     "scheme": "leroimobile",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": false,
     "ios": {
       "supportsTablet": true
     },
@@ -18,8 +17,16 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
+      "statusBar": {
+        "backgroundColor": "#0A0A0A",
+        "barStyle": "light-content"
+      },
+      "navigationBar": {
+        "visible": "leanback",
+        "backgroundColor": "transparent"
+      },
+      "softwareKeyboardLayoutMode": "pan",
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false,
       "package": "com.vanmo.leroimobile"
     },
     "web": {
