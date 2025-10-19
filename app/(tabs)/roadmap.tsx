@@ -9,6 +9,7 @@ import { storage } from '../../utils/storage';
 const API_KEY = process.env.EXPO_PUBLIC_API_KEY || '';
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
 
+
 export default function RoadmapScreen() {
   const [fileUploaded, setFileUploaded] = useState<any>(null);
   const [showFileInfo, setShowFileInfo] = useState(false);
@@ -211,7 +212,6 @@ export default function RoadmapScreen() {
       return;
     }
 
-    setShowFileInfo(false);
     setShowLoadingModal(true);
     setLoadingText('Buscando temas relacionados... 📈🧠📚');
 
@@ -259,7 +259,7 @@ export default function RoadmapScreen() {
 
     } catch (error) {
       console.error('Error en el proceso de IA:', error);
-      Alert.alert('Error', 'Error al enviar los datos al backend');
+      Alert.alert('Error', 'Error al enviar los datos al backend. Puedes intentarlo nuevamente.');
     } finally {
       setShowLoadingModal(false);
       setLoadingText('');
@@ -366,13 +366,17 @@ export default function RoadmapScreen() {
       });
       
     } catch (error) {
-      console.error('Error detallado al generar la ruta:', error);
+      console.error('🚨 Error detallado al generar la ruta:', error);
+      console.error('📜 Stack trace:', error instanceof Error ? error.stack : 'No stack trace');
       
       if (error instanceof SyntaxError) {
-        Alert.alert('Error', 'Error al procesar la respuesta del servidor. El formato no es válido.');
+        Alert.alert('Error', 'Error al procesar la respuesta del servidor. El formato no es válido. Puedes intentarlo nuevamente.');
       } else {
-        Alert.alert('Error', 'No pudimos generar tu ruta de aprendizaje 😔');
+        Alert.alert('Error', 'No pudimos generar tu ruta de aprendizaje 😔. Puedes intentarlo nuevamente.');
       }
+      
+      // Volver a mostrar el modal de temas para permitir reintentar
+      setShowTopicsModal(true);
     } finally {
       setShowLoadingModal(false);
       setLoadingText('');

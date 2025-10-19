@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView, Alert, Modal, Dimensions, Saf
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, router, Stack } from 'expo-router';
 import Svg, { Line } from 'react-native-svg';
-import * as FileSystem from 'expo-file-system';
+import { Paths, File } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import * as MediaLibrary from 'expo-media-library';
 import { captureRef } from 'react-native-view-shot';
@@ -14,29 +14,55 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 export default function GeneratedRoadmapScreen() {
   const params = useLocalSearchParams();
-  const selectedTopic = params.topic as string;
+  
+  // Parsear los datos recibidos desde roadmap.tsx
+  const roadmapTopics = params.roadmapTopics 
+    ? JSON.parse(params.roadmapTopics as string) 
+    : {};
+  
+  const roadmapInfo = params.roadmapInfo 
+    ? JSON.parse(params.roadmapInfo as string) 
+    : {};
+  
+  const relatedTopics = params.relatedTopics 
+    ? JSON.parse(params.relatedTopics as string) 
+    : [];
   
   const [showDownloadModal, setShowDownloadModal] = useState(false);
   const [showQuestionsModal, setShowQuestionsModal] = useState(false);
   const [showNodeModal, setShowNodeModal] = useState(false);
-  const [selectedNode, setSelectedNode] = useState(null);
+  const [selectedNode, setSelectedNode] = useState<any>(null);
   const [saveMessage, setSaveMessage] = useState('');
   const roadmapRef = useRef(null);
 
-  // Simular datos como en el archivo original
-  const roadmapTopics = {
-    [selectedTopic]: {
-      'Fundamentos': ['Variables y tipos de datos', 'Estructuras de control', 'Funciones'],
-      'Intermedio': ['Programación orientada a objetos', 'Manejo de archivos', 'Excepciones'],
-      'Avanzado': ['Decoradores', 'Generadores', 'Metaclases']
-    }
-  };
+  console.log('📦 Datos recibidos en generated-roadmap:');
+  console.log('roadmapTopics:', roadmapTopics);
+  console.log('roadmapInfo:', roadmapInfo);
+  console.log('relatedTopics:', relatedTopics);
 
   const [levelOffset] = useState(120);
   const [nodeWidth] = useState(220);
 
-  const handleNodePress = (label) => {
-    setSelectedNode({ label, info: `Información detallada sobre ${label}` });
+  const handleNodePress = (label: string) => {
+    const info = roadmapInfo[label];
+    
+    let displayInfo = "Sin información disponible.";
+    
+    if (info) {
+      if (typeof info === "object") {
+        if (Array.isArray(info)) {
+          displayInfo = info.join("\n");
+        } else {
+          displayInfo = Object.entries(info)
+            .map(([key, value]: [string, any]) => `${key}: ${Array.isArray(value) ? value.join(", ") : value}`)
+            .join("\n");
+        }
+      } else {
+        displayInfo = info.toString();
+      }
+    }
+    
+    setSelectedNode({ label, info: displayInfo });
     setShowNodeModal(true);
   };
 
@@ -45,7 +71,7 @@ export default function GeneratedRoadmapScreen() {
     setTimeout(() => setSaveMessage(''), 3000);
   };
 
-  const handleDownload = async (format) => {
+  const handleDownload = async (format: string) => {
     setShowDownloadModal(false);
     
     try {
@@ -62,14 +88,19 @@ export default function GeneratedRoadmapScreen() {
   };
 
   const downloadJSON = async () => {
-    const jsonData = JSON.stringify(roadmapTopics, null, 2);
-    const fileUri = FileSystem.documentDirectory + 'roadmap.json';
-    
-    await FileSystem.writeAsStringAsync(fileUri, jsonData);
-    await Sharing.shareAsync(fileUri);
-    
-    setSaveMessage('JSON descargado correctamente');
-    setTimeout(() => setSaveMessage(''), 3000);
+    try {
+      const jsonData = JSON.stringify(roadmapTopics, null, 2);
+      const file = new File(Paths.cache, 'roadmap.json');
+      
+      await file.write(jsonData);
+      await Sharing.shareAsync(file.uri);
+      
+      setSaveMessage('JSON descargado correctamente');
+      setTimeout(() => setSaveMessage(''), 3000);
+    } catch (error) {
+      console.error('Error al descargar JSON:', error);
+      Alert.alert('Error', 'No se pudo descargar el archivo JSON');
+    }
   };
 
   const downloadImage = async () => {
@@ -113,8 +144,8 @@ export default function GeneratedRoadmapScreen() {
 
   // Generar nodos y edges como en el archivo original
   const generateNodesAndEdges = () => {
-    const nodes = [];
-    const edges = [];
+    const nodes: any[] = [];
+    const edges: any[] = [];
     let idCounter = 0;
 
     if (roadmapTopics) {
@@ -146,7 +177,7 @@ export default function GeneratedRoadmapScreen() {
           });
 
           let currentSubSubtopicY = currentSubtopicY;
-          topic[subtopicKey].forEach((subSubtopic, index) => {
+          topic[subtopicKey].forEach((subSubtopic: string, index: number) => {
             const subSubtopicNode = {
               id: `subSubtopic-${idCounter++}`,
               data: { label: subSubtopic, color: '#FF92E6' },
@@ -176,7 +207,7 @@ export default function GeneratedRoadmapScreen() {
 
   const { nodes, edges } = generateNodesAndEdges();
 
-  const renderNode = (node) => {
+  const renderNode = (node: any) => {
     const nodeStyle = node.type === 'topic' 
       ? [styles.topicNodeFlow, { backgroundColor: node.data.color }]
       : node.type === 'subtopic'
@@ -201,7 +232,7 @@ export default function GeneratedRoadmapScreen() {
     );
   };
 
-  const renderEdge = (edge) => {
+  const renderEdge = (edge: any) => {
     const sourceNode = nodes.find(n => n.id === edge.source);
     const targetNode = nodes.find(n => n.id === edge.target);
     
@@ -225,6 +256,11 @@ export default function GeneratedRoadmapScreen() {
     );
   };
 
+  // Obtener el título del roadmap (primera key de roadmapTopics)
+  const roadmapTitle = roadmapTopics && Object.keys(roadmapTopics).length > 0
+    ? Object.keys(roadmapTopics)[0]
+    : 'Ruta de Aprendizaje';
+
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
@@ -233,24 +269,27 @@ export default function GeneratedRoadmapScreen() {
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Ruta de Aprendizaje</Text>
+        <Text style={styles.headerTitle}>{roadmapTitle}</Text>
       </View>
 
       <ScrollView 
-        style={styles.roadmapContainer} 
-        horizontal={true}
-        showsHorizontalScrollIndicator={false}
+        style={styles.roadmapContainer}
         showsVerticalScrollIndicator={false}
       >
-        <View ref={roadmapRef} style={styles.flowContainer}>
-          {/* SVG para las líneas */}
-          <Svg style={styles.svgContainer}>
-            {edges.map(renderEdge)}
-          </Svg>
-          
-          {/* Nodos */}
-          {nodes.map(renderNode)}
-        </View>
+        <ScrollView 
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+        >
+          <View ref={roadmapRef} style={styles.flowContainer}>
+            {/* SVG para las líneas */}
+            <Svg style={styles.svgContainer}>
+              {edges.map(renderEdge)}
+            </Svg>
+            
+            {/* Nodos */}
+            {nodes.map(renderNode)}
+          </View>
+        </ScrollView>
       </ScrollView>
 
       <View style={styles.controlsContainer}>

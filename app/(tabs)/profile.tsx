@@ -353,6 +353,23 @@ export default function ProfileScreen() {
           </TouchableOpacity>
         </View>
 
+        {/* Acerca de */}
+        <View style={styles.card}>
+          <View style={styles.cardHeader}>
+            <Ionicons name="information-circle-outline" size={24} color="#835BFC" />
+            <Text style={styles.cardTitle}>Información</Text>
+          </View>
+          
+          <TouchableOpacity 
+            style={styles.actionButton} 
+            onPress={() => router.push('/about')}
+          >
+            <Ionicons name="book-outline" size={20} color="#835BFC" />
+            <Text style={styles.actionButtonText}>Acerca de Leroi</Text>
+            <Ionicons name="chevron-forward" size={20} color="#A1A1AA" />
+          </TouchableOpacity>
+        </View>
+
         {/* Cerrar Sesión */}
         <View style={styles.card}>
           <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
