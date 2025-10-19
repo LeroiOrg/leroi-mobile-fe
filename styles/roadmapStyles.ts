@@ -51,12 +51,8 @@ export const roadmapStyles = StyleSheet.create({
   },
   fileInfoContainer: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
     backgroundColor: COLORS.background,
     padding: SPACING.lg,
-    gap: SPACING.lg,
   },
   fileDetails: {
     flex: 1,
@@ -97,37 +93,13 @@ export const roadmapStyles = StyleSheet.create({
     gap: SPACING.lg,
     marginTop: SPACING.xl,
   },
-  generateButton: {
-    backgroundColor: COLORS.hover,
-    paddingVertical: SPACING.lg,
-    paddingHorizontal: SPACING.xl,
-    borderRadius: RADIUS.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-    minWidth: 200,
-  },
+
   generateButtonDisabled: {
     backgroundColor: '#666',
   },
-  generateButtonText: {
-    fontSize: FONT_SIZES.md,
-    fontFamily: FONTS.semiBold,
-    color: COLORS.foreground,
-  },
-  resetButton: {
-    backgroundColor: '#ff4d4d',
-    paddingVertical: SPACING.lg,
-    paddingHorizontal: SPACING.lg,
-    borderRadius: RADIUS.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-    minWidth: 150,
-  },
-  resetButtonText: {
-    fontSize: FONT_SIZES.md,
-    fontFamily: FONTS.semiBold,
-    color: COLORS.foreground,
-  },
+
+
+
   pdfPreview: {
     flex: 1,
     aspectRatio: 1,
@@ -227,4 +199,114 @@ export const roadmapStyles = StyleSheet.create({
     fontFamily: FONTS.semiBold,
     color: COLORS.foreground,
   },
+  // New styles for reorganized layout
+  pdfPreviewTop: {
+    backgroundColor: COLORS.card,
+    borderRadius: RADIUS.lg,
+    padding: SPACING.lg,
+    marginBottom: SPACING.lg,
+    minHeight: 250,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  previewTitle: {
+    fontSize: FONT_SIZES.lg,
+    fontFamily: FONTS.bold,
+    color: COLORS.foreground,
+    textAlign: 'center',
+    marginBottom: SPACING.md,
+  },
+  pdfContainer: {
+    backgroundColor: COLORS.background,
+    borderRadius: RADIUS.md,
+    padding: SPACING.sm,
+    height: 400,
+    borderWidth: 2,
+    borderColor: COLORS.hover,
+    overflow: 'hidden',
+  },
+  pdfViewer: {
+    flex: 1,
+    backgroundColor: 'white',
+    borderRadius: RADIUS.sm,
+    minHeight: 300,
+  },
+
+  pdfPlaceholder: {
+    fontSize: FONT_SIZES.xl,
+    fontFamily: FONTS.bold,
+    color: COLORS.hover,
+    textAlign: 'center',
+    marginBottom: SPACING.sm,
+  },
+  pdfSize: {
+    fontSize: FONT_SIZES.md,
+    fontFamily: FONTS.semiBold,
+    color: COLORS.mutedForeground,
+    textAlign: 'center',
+  },
+  fileDetailsBottom: {
+    gap: SPACING.lg,
+  },
+  buttonsContainerHorizontal: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: SPACING.md,
+    marginTop: SPACING.xl,
+    width: '100%',
+  },
+  generateButton: {
+    backgroundColor: COLORS.hover,
+    paddingVertical: SPACING.lg,
+    paddingHorizontal: SPACING.md,
+    borderRadius: RADIUS.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+  },
+  generateButtonText: {
+    fontSize: FONT_SIZES.md,
+    fontFamily: FONTS.semiBold,
+    color: COLORS.foreground,
+    textAlign: 'center',
+  },
+  resetButton: {
+    backgroundColor: '#ff4d4d',
+    paddingVertical: SPACING.lg,
+    paddingHorizontal: SPACING.md,
+    borderRadius: RADIUS.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 0.7,
+  },
+  resetButtonText: {
+    fontSize: FONT_SIZES.md,
+    fontFamily: FONTS.semiBold,
+    color: COLORS.foreground,
+    textAlign: 'center',
+  },
+
+  pdfPlaceholderContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 180,
+    gap: SPACING.sm,
+  },
+  pdfIcon: {
+    fontSize: 48,
+    color: COLORS.hover,
+    marginBottom: SPACING.sm,
+  },
+  pdfPreviewNote: {
+    fontSize: FONT_SIZES.sm,
+    fontFamily: FONTS.regular,
+    color: COLORS.mutedForeground,
+    textAlign: 'center',
+    fontStyle: 'italic',
+    marginTop: SPACING.sm,
+  },
+
 });

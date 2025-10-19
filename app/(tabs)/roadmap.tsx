@@ -1,30 +1,27 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Alert, Modal, Image, Animated, SafeAreaView } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { View, Text, TouchableOpacity, ScrollView, Alert, Modal, Image, Animated } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { roadmapStyles as styles } from '../../styles/roadmapStyles';
 import * as DocumentPicker from 'expo-document-picker';
 import { storage } from '../../utils/storage';
 
-const API_KEY = process.env.EXPO_PUBLIC_API_KEY;
-const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
-const PREPROCESSING_URL = process.env.EXPO_PUBLIC_PAYMENT_BE;
-const LEARNING_URL = 'https://learning-path-be-1074530412091.us-east1.run.app';
+const API_KEY = process.env.EXPO_PUBLIC_API_KEY || '';
+const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
 
 export default function RoadmapScreen() {
-  const [fileUploaded, setFileUploaded] = useState(null);
+  const [fileUploaded, setFileUploaded] = useState<any>(null);
   const [showFileInfo, setShowFileInfo] = useState(false);
   const [previewCost, setPreviewCost] = useState('Calculando...');
   const [userCredits, setUserCredits] = useState('Cargando...');
   const [canUserPay, setCanUserPay] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
   const [showTopicsModal, setShowTopicsModal] = useState(false);
-  const [topics, setTopics] = useState([]);
+  const [topics, setTopics] = useState<string[]>([]);
   const [showLoadingModal, setShowLoadingModal] = useState(false);
   const [loadingText, setLoadingText] = useState('');
   const [showHelpModal, setShowHelpModal] = useState(false);
-  const [userData, setUserData] = useState(null);
-  const [fileData, setFileData] = useState(null);
+  const [userData, setUserData] = useState<any>(null);
+  const [fileData, setFileData] = useState<any>(null);
   const spinValue = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -37,13 +34,9 @@ export default function RoadmapScreen() {
         })
       );
       spinAnimation.start();
-      
-      return () => {
-        spinAnimation.stop();
-        spinValue.setValue(0);
-      };
+      return () => spinAnimation.stop();
     }
-  }, [showLoadingModal, spinValue]);
+  }, [showLoadingModal]);
 
   const spinInterpolate = spinValue.interpolate({
     inputRange: [0, 1],
@@ -62,15 +55,13 @@ export default function RoadmapScreen() {
         const userResponse = await fetch(`${BACKEND_URL}/users_authentication_path/user-profile`, {
           method: 'GET',
           headers: {
-            Authorization: `Bearer ${authToken}`,
+            'Authorization': `Bearer ${authToken}`,
             'Content-Type': 'application/json',
             'x-api-key': API_KEY
-          },
+          } as HeadersInit,
         });
 
-        if (!userResponse.ok) {
-          throw new Error('Error al obtener los datos del usuario');
-        }
+        if (!userResponse.ok) throw new Error('Error al obtener los datos del usuario');
 
         const userData = await userResponse.json();
         setUserData(userData.data);
@@ -83,15 +74,15 @@ export default function RoadmapScreen() {
     fetchUserData();
   }, []);
 
-  const convertToBase64 = (uri) => {
+  const convertToBase64 = (uri: string) => {
     return new Promise((resolve, reject) => {
       fetch(uri)
         .then(response => response.blob())
         .then(blob => {
           const reader = new FileReader();
           reader.onloadend = () => {
-            const base64String = reader.result;
-            const base64Data = base64String.split(',')[1];
+            const base64String = reader.result as string;
+            const base64Data = base64String ? base64String.split(',')[1] : '';
             resolve(base64Data);
           };
           reader.onerror = reject;
@@ -101,7 +92,7 @@ export default function RoadmapScreen() {
     });
   };
 
-  const getEmailFromToken = (token) => {
+  const getEmailFromToken = (token: string) => {
     try {
       if (!token) return null;
       const parts = token.split('.');
@@ -130,7 +121,7 @@ export default function RoadmapScreen() {
       const file = result.assets[0];
       const maxSize = 50 * 1024 * 1024;
 
-      if (file.size > maxSize) {
+      if (file.size && file.size > maxSize) {
         Alert.alert('Error', '¡El archivo supera nuestras capacidades de procesamiento! Prueba eliminando algunas páginas o imágenes del archivo...');
         return;
       }
@@ -139,9 +130,9 @@ export default function RoadmapScreen() {
       setLoadingText('Cargando documento 🧐');
       setFileUploaded(file);
 
-      const base64Data = await convertToBase64(file.uri);
+      const base64Data = await convertToBase64(file.uri || '');
       const authToken = await storage.getToken();
-      const email = getEmailFromToken(authToken);
+      const email = getEmailFromToken(authToken || '');
 
       if (!email) {
         Alert.alert('Error', 'No se pudo obtener el correo del usuario.');
@@ -151,26 +142,23 @@ export default function RoadmapScreen() {
       const dataToSend = {
         fileName: file.name,
         fileType: file.mimeType,
-        fileSize: file.size,
+        fileSize: file.size || 0,
         fileBase64: base64Data,
       };
 
       setFileData(dataToSend);
 
-      // Get cost estimate
-      const previewResponse = await fetch(`${PREPROCESSING_URL}/files/cost-estimates`, {
+      const previewResponse = await fetch(`${BACKEND_URL}/files/cost-estimates`, {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${authToken}`,
+          'Authorization': `Bearer ${authToken}`,
           'Content-Type': 'application/json',
           'x-api-key': API_KEY
-        },
+        } as HeadersInit,
         body: JSON.stringify(dataToSend),
       });
 
-      if (!previewResponse.ok) {
-        throw new Error('Error al obtener la vista previa de costos');
-      }
+      if (!previewResponse.ok) throw new Error('Error al obtener la vista previa de costos');
 
       const previewResult = await previewResponse.json();
       const credits_cost = previewResult.credits_cost || 1;
@@ -185,13 +173,12 @@ export default function RoadmapScreen() {
         Alert.alert('Error', 'Créditos Insuficientes 😔');
       }
 
-      // Analyze file for virus
-      fetch(`${PREPROCESSING_URL}/files/analyses`, {
+      fetch(`${BACKEND_URL}/files/analyses`, {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${authToken}`,
+          'Authorization': `Bearer ${authToken}`,
           'Content-Type': 'application/json'
-        },
+        } as HeadersInit,
         body: JSON.stringify(dataToSend),
       })
       .then(response => response.json())
@@ -200,9 +187,7 @@ export default function RoadmapScreen() {
           Alert.alert('Error', 'El archivo contiene virus. El usuario ha sido eliminado.');
         }
       })
-      .catch(error => {
-        console.error('Error al analizar el archivo:', error);
-      });
+      .catch(error => console.error('Error al analizar el archivo:', error));
 
     } catch (error) {
       console.error('Error al obtener la vista previa de costos:', error);
@@ -232,24 +217,44 @@ export default function RoadmapScreen() {
 
     try {
       const authToken = await storage.getToken();
-      const processResponse = await fetch(`${LEARNING_URL}/learning_path/documents`, {
+      console.log('🚀 URL que está usando:', `${BACKEND_URL}/learning_path/documents`);
+      console.log('📦 Datos a enviar:', fileData);
+      
+      const processResponse = await fetch(`${BACKEND_URL}/learning_path/documents`, {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${authToken}`,
-          'Content-Type': 'application/json',
-          'x-api-key': API_KEY
-        },
+          'Authorization': `Bearer ${authToken}`,
+          'Content-Type': 'application/json'
+        } as HeadersInit,
         body: JSON.stringify(fileData),
       });
 
+      console.log('📡 Response status:', processResponse.status);
+      const responseText = await processResponse.text();
+      console.log('📄 Response text:', responseText);
+
       if (!processResponse.ok) {
-        Alert.alert('Error', 'No puedes generar rutas de aprendizaje de temas sensibles');
-        const errorData = await processResponse.json();
-        throw new Error(errorData.detail);
+        let errorMessage = 'Error del servidor';
+        if (processResponse.status === 500) {
+          errorMessage = 'Error interno del servidor. Por favor, inténtalo más tarde.';
+        } else if (processResponse.status === 400) {
+          errorMessage = 'No puedes generar rutas de aprendizaje de temas sensibles';
+        }
+        Alert.alert('Error', errorMessage);
+        throw new Error(`HTTP ${processResponse.status}: ${responseText}`);
       }
 
-      const result = await processResponse.json();
-      setTopics(result.themes);
+      let result;
+      try {
+        result = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('❌ JSON Parse Error:', parseError);
+        console.error('📄 Raw response:', responseText);
+        throw new Error('La respuesta del servidor no es JSON válido');
+      }
+
+      console.log('✅ Parsed result:', result);
+      setTopics(result.themes || []);
       setShowTopicsModal(true);
 
     } catch (error) {
@@ -261,38 +266,30 @@ export default function RoadmapScreen() {
     }
   };
 
-  const updateUserCredits = async (amount) => {
+  const updateUserCredits = async (amount: number) => {
     try {
       const authToken = await storage.getToken();
-      const response = await fetch(`${BACKEND_URL}/users_authentication_path/user-credits/${encodeURIComponent(userData.email)}`, {
+      const response = await fetch(`${BACKEND_URL}/users_authentication_path/user-credits/${encodeURIComponent(userData?.email || '')}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${authToken}`,
           'x-api-key': API_KEY
-        },
+        } as HeadersInit,
         body: JSON.stringify({ amount }),
       });
 
-      if (!response.ok) {
-        throw new Error('Error al actualizar los créditos del usuario');
-      }
+      if (!response.ok) throw new Error('Error al actualizar los créditos del usuario');
 
-      setUserData(prev => ({ ...prev, credits: prev.credits + amount }));
+      setUserData((prev: any) => ({ ...prev, credits: prev.credits + amount }));
     } catch (error) {
       console.error('Error al actualizar créditos:', error);
     }
   };
 
-  const extractJSON = (str) => {
-    if (!str) {
-      console.error('String vacío recibido');
-      return null;
-    }
-    
-    if (typeof str === 'object') {
-      return str;
-    }
+  const extractJSON = (str: any) => {
+    if (!str) return null;
+    if (typeof str === 'object') return str;
     
     let cleaned = str.trim();
     cleaned = cleaned.replace(/^```(?:json|python|javascript|py)?\s*/i, '');
@@ -301,68 +298,69 @@ export default function RoadmapScreen() {
     const firstBrace = cleaned.indexOf('{');
     const lastBrace = cleaned.lastIndexOf('}');
     
-    if (firstBrace === -1 || lastBrace === -1) {
-      console.error('No se encontraron llaves {} en el string');
-      return null;
-    }
+    if (firstBrace === -1 || lastBrace === -1) return null;
     
     cleaned = cleaned.substring(firstBrace, lastBrace + 1);
     
     try {
       return JSON.parse(cleaned);
     } catch (e) {
-      console.error('Error al parsear JSON:', e);
       return null;
     }
   };
 
-  const handleTopicSelect = async (topic) => {
+  const handleTopicSelect = async (topic: string) => {
     setShowTopicsModal(false);
     setShowLoadingModal(true);
     setLoadingText('Estamos creando tu ruta de aprendizaje 😁');
     
     try {
       const authToken = await storage.getToken();
-      const response = await fetch(`${LEARNING_URL}/learning_path/roadmaps`, {
+      
+      // Generate roadmap
+      const response = await fetch(`${BACKEND_URL}/learning_path/roadmaps`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authToken}`,
-          'x-api-key': API_KEY
-        },
+          'Authorization': `Bearer ${authToken}`
+        } as HeadersInit,
         body: JSON.stringify({ topic }),
       });
 
-      if (!response.ok) {
-        throw new Error('Error al enviar el topic al backend');
-      }
+      if (!response.ok) throw new Error('Error al enviar el topic al backend');
 
       const result = await response.json();
       
-      const parseResult = extractJSON(result.roadmap);
-      if (!parseResult) {
-        throw new Error('No se pudo parsear el roadmap');
-      }
-      
-      const parseSecondResult = extractJSON(result.extra_info);
-      if (!parseSecondResult) {
-        throw new Error('No se pudo parsear extra_info');
-      }
+      const roadmapData = typeof result.roadmap === 'string'
+        ? JSON.parse(result.roadmap)
+        : result.roadmap;
+
+      const extraInfoData = typeof result.extra_info === 'string'
+        ? JSON.parse(result.extra_info)
+        : result.extra_info;
 
       await updateUserCredits(-1);
 
-      const relatedTopics = [
-        'Programación en Python',
-        'Algoritmos y Estructuras de Datos',
-        'Bases de Datos SQL',
-        'Redes de Computadores'
-      ];
+      // Get related topics
+      const responseTopics = await fetch(`${BACKEND_URL}/learning_path/related-topics`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        } as HeadersInit,
+        body: JSON.stringify({ topic }),
+      });
+
+      let relatedTopics = [];
+      if (responseTopics.ok) {
+        relatedTopics = await responseTopics.json();
+      }
       
       router.push({
         pathname: '/generated-roadmap',
         params: {
-          roadmapTopics: JSON.stringify(parseResult),
-          roadmapInfo: JSON.stringify(parseSecondResult),
+          roadmapTopics: JSON.stringify(roadmapData),
+          roadmapInfo: JSON.stringify(extraInfoData),
           relatedTopics: JSON.stringify(relatedTopics)
         }
       });
@@ -397,13 +395,26 @@ export default function RoadmapScreen() {
           </TouchableOpacity>
         </View>
       ) : (
-        <View style={styles.fileInfoContainer}>
-          <View style={styles.fileDetails}>
-            <Text style={styles.fileDetailsTitle}>Detalles del Archivo</Text>
-            <Text style={styles.fileInfo}>Nombre: {fileUploaded.name}</Text>
-            <Text style={styles.fileInfo}>
-              Tamaño: {(fileUploaded.size / (1024 * 1024)).toFixed(2)} MB
-            </Text>
+        <ScrollView style={styles.fileInfoContainer}>
+          <View style={styles.pdfPreviewTop}>
+            <Text style={styles.previewTitle}>Vista previa del PDF</Text>
+            <View style={styles.pdfContainer}>
+              <View style={styles.pdfPlaceholderContainer}>
+                <Text style={styles.pdfIcon}>📄</Text>
+                <Text style={styles.pdfPlaceholder}>{fileUploaded.name}</Text>
+                <Text style={styles.pdfSize}>{((fileUploaded.size || 0) / (1024 * 1024)).toFixed(2)} MB</Text>
+                <Text style={styles.pdfPreviewNote}>Archivo PDF cargado correctamente</Text>
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.fileDetailsBottom}>
+            <View style={styles.fileDetails}>
+              <Text style={styles.fileDetailsTitle}>Detalles del archivo</Text>
+              <Text style={styles.fileInfo}>Nombre: {fileUploaded.name}</Text>
+              <Text style={styles.fileInfo}>Tamaño: {((fileUploaded.size || 0) / (1024 * 1024)).toFixed(2)} MB</Text>
+              <Text style={styles.fileInfo}>Tipo: PDF</Text>
+            </View>
             
             <View style={styles.creditsContainer}>
               <Text style={styles.creditsTitle}>Costo de procesamiento</Text>
@@ -411,14 +422,14 @@ export default function RoadmapScreen() {
               <Text style={styles.userCredits}>{userCredits}</Text>
             </View>
 
-            <View style={styles.buttonsContainer}>
+            <View style={styles.buttonsContainerHorizontal}>
               <TouchableOpacity 
                 style={[styles.generateButton, canUserPay && styles.generateButtonDisabled]} 
                 onPress={handleGenerateRoadmap}
                 disabled={canUserPay}
               >
                 <Text style={styles.generateButtonText}>
-                  {isLoading ? 'Generando...' : 'Generar ruta de aprendizaje'}
+                  Generar ruta de aprendizaje
                 </Text>
               </TouchableOpacity>
               
@@ -427,11 +438,7 @@ export default function RoadmapScreen() {
               </TouchableOpacity>
             </View>
           </View>
-
-          <View style={styles.pdfPreview}>
-            <Text style={styles.uploadText}>Vista previa del PDF</Text>
-          </View>
-        </View>
+        </ScrollView>
       )}
 
       <TouchableOpacity 
