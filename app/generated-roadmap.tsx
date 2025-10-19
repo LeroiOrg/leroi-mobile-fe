@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Alert, Modal, Dimensions, SafeAreaView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Alert, Modal, Dimensions } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, router, Stack } from 'expo-router';
 import Svg, { Line } from 'react-native-svg';

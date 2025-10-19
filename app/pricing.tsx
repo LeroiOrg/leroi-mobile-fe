@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, SafeAreaView, Alert, Switch, Modal, Linking, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Alert, Switch, Modal, Linking, KeyboardAvoidingView, Platform } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { Picker } from '@react-native-picker/picker';
@@ -226,7 +227,10 @@ export default function PricingScreen() {
             <Text style={styles.headerTitle}>Comprar Créditos</Text>
           </View>
 
-          <ScrollView style={styles.scrollContainer} keyboardShouldPersistTaps="handled">
+          <ScrollView 
+            style={styles.scrollContainer} 
+            keyboardShouldPersistTaps="handled"
+          >
             <View style={styles.pricingBox}>
               <Text style={styles.title}>Comprar Créditos</Text>
 

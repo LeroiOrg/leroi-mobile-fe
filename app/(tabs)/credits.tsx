@@ -64,7 +64,10 @@ const pricingData = [
 export default function CreditsScreen() {
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollContainer}>
+      <ScrollView 
+        style={styles.scrollContainer}
+        contentContainerStyle={{ paddingBottom: 100 }}
+      >
       <View style={styles.header}>
         <Text style={styles.title}>Adquiere créditos</Text>
         <Text style={styles.subtitle}>

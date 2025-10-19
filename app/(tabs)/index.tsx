@@ -274,7 +274,10 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollContainer}>
+      <ScrollView 
+        style={styles.scrollContainer}
+        contentContainerStyle={{ paddingBottom: 100 }}
+      >
       {/* Hook Section */}
       <View style={styles.hookSection}>
           <Image source={gif} style={styles.hookGif} resizeMode="contain" />

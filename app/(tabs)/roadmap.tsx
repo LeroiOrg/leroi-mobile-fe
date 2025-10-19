@@ -399,7 +399,10 @@ export default function RoadmapScreen() {
           </TouchableOpacity>
         </View>
       ) : (
-        <ScrollView style={styles.fileInfoContainer}>
+        <ScrollView 
+          style={styles.fileInfoContainer}
+          contentContainerStyle={{ paddingBottom: 100 }}
+        >
           <View style={styles.pdfPreviewTop}>
             <Text style={styles.previewTitle}>Vista previa del PDF</Text>
             <View style={styles.pdfContainer}>
