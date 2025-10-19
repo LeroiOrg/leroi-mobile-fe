@@ -1,7 +1,6 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
 import { View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { HapticTab } from '@/components/haptic-tab';
 import ProtectedRoute from '@/components/ProtectedRoute';
@@ -11,9 +10,7 @@ export default function TabLayout() {
 
   return (
     <ProtectedRoute>
-      <View style={{ flex: 1, backgroundColor: '#0A0A0A' }}>
-        <SafeAreaView style={{ flex: 1 }} edges={['top']}>
-        <Tabs
+      <Tabs
         screenOptions={{
           tabBarActiveTintColor: '#FFFFFF',
           tabBarInactiveTintColor: 'rgba(255, 255, 255, 0.5)',
@@ -125,9 +122,7 @@ export default function TabLayout() {
             ),
           }}
         />
-        </Tabs>
-        </SafeAreaView>
-      </View>
+      </Tabs>
     </ProtectedRoute>
   );
 }
