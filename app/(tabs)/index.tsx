@@ -1,7 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Link } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Image, ScrollView, Text, TouchableOpacity, View, SafeAreaView } from 'react-native';
+import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { homeStyles as styles } from '../../styles/homeStyles';
 import Animated, {
   useAnimatedStyle,
@@ -33,6 +34,7 @@ const SECTION_PADDING_VERTICAL = 60;
 
 // --- ASSETS ---
 const gif = require('../../assets/images/gif.gif');
+const imagotipo = require('../../assets/images/imagotipo.png');
 
 // SVG Icons Components - Using original SVG files
 const Feature1Icon = () => (
@@ -280,6 +282,7 @@ export default function HomeScreen() {
       >
       {/* Hook Section */}
       <View style={styles.hookSection}>
+          <Image source={imagotipo} style={styles.imagotipo} resizeMode="contain" />
           <Image source={gif} style={styles.hookGif} resizeMode="contain" />
           <FadeInText delay={200} style={styles.h1}>
             Convierte tus documentos en rutas de aprendizaje personalizadas

@@ -16,7 +16,7 @@ export const RADIUS = {
 // Colores globales (tema oscuro por defecto)
 export const COLORS = {
   // Colores base
-  background: '#0A0A0A',        // hsl(222.2, 84%, 4.9%)
+  background: '#040819',        // hsl(222.2, 84%, 4.9%)
   foreground: '#FFFFFF',        // hsl(210, 40%, 98%)
   
   // Colores primarios y secundarios
@@ -28,7 +28,7 @@ export const COLORS = {
   // Componentes UI
   card: '#101838',
   cardForeground: '#FFFFFF',
-  popover: '#0A0A0A',
+  popover: '#040819',
   popoverForeground: '#FFFFFF',
   muted: '#2A2D3A',
   mutedForeground: '#A1A1AA',   // hsl(215, 20.2%, 65.1%)
@@ -68,3 +68,16 @@ export const FONT_SIZES = {
   huge: 32,
   massive: 40,
 };
+
+// Estilos comunes para layouts
+import { StyleSheet } from 'react-native';
+
+export const LAYOUT_STYLES = StyleSheet.create({
+  rootContentStyle: {
+    backgroundColor: COLORS.background,
+  },
+  
+  rootHeaderStyle: {
+    backgroundColor: COLORS.background,
+  },
+});

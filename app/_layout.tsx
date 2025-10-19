@@ -4,10 +4,24 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
+import * as SystemUI from 'expo-system-ui';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import WelcomeSlideshow from '@/components/WelcomeSlideshow';
+import { COLORS, LAYOUT_STYLES } from '@/styles/globalStyles';
+
+// Tema personalizado de Leroi con fondo consistente
+const LeroiTheme = {
+  ...DarkTheme,
+  colors: {
+    ...DarkTheme.colors,
+    background: COLORS.background,
+    card: COLORS.background,
+    primary: COLORS.hover,
+    text: COLORS.foreground,
+  },
+};
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -26,6 +40,8 @@ export default function RootLayout() {
 
   useEffect(() => {
     checkFirstLaunch();
+    // Configurar el color de fondo del sistema
+    SystemUI.setBackgroundColorAsync(COLORS.background);
   }, []);
 
   const checkFirstLaunch = async () => {
@@ -60,8 +76,13 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
+    <ThemeProvider value={LeroiTheme}>
+      <Stack
+        screenOptions={{
+          contentStyle: LAYOUT_STYLES.rootContentStyle,
+          headerStyle: LAYOUT_STYLES.rootHeaderStyle,
+        }}
+      >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="register" options={{ headerShown: false }} />
         <Stack.Screen name="login" options={{ headerShown: false }} />

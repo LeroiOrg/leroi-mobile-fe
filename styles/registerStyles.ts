@@ -3,8 +3,7 @@ import { StyleSheet } from 'react-native';
 export const registerStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0A0A',
-    position: 'relative',
+    backgroundColor: '#040819',
   },
   scrollContainer: {
     flexGrow: 1,

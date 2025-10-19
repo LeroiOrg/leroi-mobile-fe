@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { HapticTab } from '@/components/haptic-tab';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { BlurView } from 'expo-blur';
+import { tabsLayoutStyles, TAB_COLORS } from '@/styles/tabsLayoutStyles';
 
 export default function TabLayout() {
 
@@ -12,42 +13,21 @@ export default function TabLayout() {
     <ProtectedRoute>
       <Tabs
         screenOptions={{
-          tabBarActiveTintColor: '#FFFFFF',
-          tabBarInactiveTintColor: 'rgba(255, 255, 255, 0.5)',
-          tabBarStyle: {
-            backgroundColor: 'transparent',
-            borderTopWidth: 0,
-            height: 85,
-            paddingBottom: 25,
-            paddingTop: 10,
-            position: 'absolute',
-            elevation: 0,
-          },
+          tabBarActiveTintColor: TAB_COLORS.activeTint,
+          tabBarInactiveTintColor: TAB_COLORS.inactiveTint,
+          tabBarStyle: tabsLayoutStyles.tabBarStyle,
+          sceneStyle: tabsLayoutStyles.sceneStyle,
           tabBarBackground: () => (
             <BlurView
-              intensity={80}
-              tint="dark"
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                bottom: 0,
-                right: 0,
-                backgroundColor: 'rgba(131, 91, 252, 0.9)',
-                borderTopLeftRadius: 20,
-                borderTopRightRadius: 20,
-                overflow: 'hidden',
-                borderTopColor: '#6B47CC',
-                borderTopWidth: 1,
-              }}
+              intensity={TAB_COLORS.blurIntensity}
+              tint={TAB_COLORS.blurTint}
+              style={tabsLayoutStyles.blurViewStyle}
             />
           ),
           headerShown: false,
           tabBarButton: HapticTab,
           tabBarShowLabel: false,
-          tabBarItemStyle: {
-            paddingVertical: 5,
-          },
+          tabBarItemStyle: tabsLayoutStyles.tabBarItemStyle,
           animation: 'shift',
         }}>
         <Tabs.Screen
@@ -55,14 +35,10 @@ export default function TabLayout() {
           options={{
             title: '',
             tabBarIcon: ({ color, focused }) => (
-              <View style={{
-                backgroundColor: focused ? 'rgba(255, 255, 255, 0.2)' : 'transparent',
-                borderRadius: 12,
-                width: 50,
-                height: 50,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
+              <View style={[
+                tabsLayoutStyles.tabIconContainer,
+                focused ? tabsLayoutStyles.tabIconContainerFocused : tabsLayoutStyles.tabIconContainerUnfocused
+              ]}>
                 <Ionicons name={focused ? "home" : "home-outline"} size={24} color={color} />
               </View>
             ),
@@ -73,14 +49,10 @@ export default function TabLayout() {
           options={{
             title: '',
             tabBarIcon: ({ color, focused }) => (
-              <View style={{
-                backgroundColor: focused ? 'rgba(255, 255, 255, 0.2)' : 'transparent',
-                borderRadius: 12,
-                width: 50,
-                height: 50,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
+              <View style={[
+                tabsLayoutStyles.tabIconContainer,
+                focused ? tabsLayoutStyles.tabIconContainerFocused : tabsLayoutStyles.tabIconContainerUnfocused
+              ]}>
                 <Ionicons name={focused ? "card" : "card-outline"} size={24} color={color} />
               </View>
             ),
@@ -91,14 +63,10 @@ export default function TabLayout() {
           options={{
             title: '',
             tabBarIcon: ({ color, focused }) => (
-              <View style={{
-                backgroundColor: focused ? 'rgba(255, 255, 255, 0.2)' : 'transparent',
-                borderRadius: 12,
-                width: 50,
-                height: 50,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
+              <View style={[
+                tabsLayoutStyles.tabIconContainer,
+                focused ? tabsLayoutStyles.tabIconContainerFocused : tabsLayoutStyles.tabIconContainerUnfocused
+              ]}>
                 <Ionicons name={focused ? "map" : "map-outline"} size={24} color={color} />
               </View>
             ),
@@ -109,14 +77,10 @@ export default function TabLayout() {
           options={{
             title: '',
             tabBarIcon: ({ color, focused }) => (
-              <View style={{
-                backgroundColor: focused ? 'rgba(255, 255, 255, 0.2)' : 'transparent',
-                borderRadius: 12,
-                width: 50,
-                height: 50,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
+              <View style={[
+                tabsLayoutStyles.tabIconContainer,
+                focused ? tabsLayoutStyles.tabIconContainerFocused : tabsLayoutStyles.tabIconContainerUnfocused
+              ]}>
                 <Ionicons name={focused ? "person" : "person-outline"} size={24} color={color} />
               </View>
             ),

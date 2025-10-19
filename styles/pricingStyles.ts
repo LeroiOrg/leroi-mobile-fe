@@ -336,7 +336,7 @@ export const pricingStyles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#0a0a0a',
+    backgroundColor: '#040819',
     padding: 20,
   },
   

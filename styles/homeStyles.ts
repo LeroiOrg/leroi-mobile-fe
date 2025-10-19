@@ -14,9 +14,9 @@ export const homeStyles = StyleSheet.create({
   // Sections
   hookSection: {
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     padding: SPACING.lg,
-    paddingTop: 100,
+    paddingTop: 0,
     minHeight: Dimensions.get('window').height * 0.8,
     position: 'relative',
   },
@@ -37,10 +37,18 @@ export const homeStyles = StyleSheet.create({
     backgroundColor: COLORS.background,
   },
 
+  // Imagotipo (logo)
+  imagotipo: {
+    width: 280,
+    height: 84,
+    marginTop: 16,
+    marginBottom: 32,
+  },
+
   // GIF Image
   hookGif: {
-    width: 300,
-    height: 200,
+    width: '100%',
+    height: Dimensions.get('window').width * 0.67, // Mantiene proporción 3:2
     marginBottom: 24,
     borderRadius: 12,
   },
