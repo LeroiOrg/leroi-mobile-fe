@@ -292,7 +292,7 @@ export default function HomeScreen() {
               <Text style={styles.ctaButtonText}>{isAuthenticated ? "Generar ruta de aprendizaje" : "Sube tu primer documento"}</Text>
             </TouchableOpacity>
           </Link>
-          
+          {/*
           <TouchableOpacity style={styles.resetButton} onPress={resetSlideshow}>
             <Text style={styles.resetButtonText}>Ver slideshow nuevamente</Text>
           </TouchableOpacity>
@@ -307,7 +307,7 @@ export default function HomeScreen() {
             <TouchableOpacity style={[styles.resetButton, { backgroundColor: '#835bfc', marginTop: 10 }]}>
               <Text style={styles.resetButtonText}>Ver página de éxito de pago</Text>
             </TouchableOpacity>
-          </Link>
+          </Link> */}
       </View>
 
       {/* Features Section */}

@@ -103,6 +103,28 @@ export const generatedRoadmapStyles = StyleSheet.create({
     justifyContent: 'center',
   },
   
+  divider: {
+    height: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    marginVertical: SPACING.xs,
+  },
+  
+  zoomIndicator: {
+    position: 'absolute',
+    top: 120,
+    left: SPACING.md,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    borderRadius: 8,
+    paddingVertical: SPACING.xs,
+    paddingHorizontal: SPACING.sm,
+  },
+  
+  zoomIndicatorText: {
+    color: '#fff',
+    fontFamily: FONTS.medium,
+    fontSize: FONT_SIZES.xs,
+  },
+  
   saveMessage: {
     position: 'absolute',
     bottom: 100,
@@ -255,8 +277,9 @@ export const generatedRoadmapStyles = StyleSheet.create({
   // Flow-based roadmap styles
   flowContainer: {
     position: 'relative',
-    width: 1200,
-    height: 1000,
+    width: 2500, // Aumentado para permitir más espacio horizontal
+    minHeight: 3000, // Aumentado para permitir más espacio vertical
+    paddingBottom: 200, // Espacio adicional al final
   },
   
   svgContainer: {
@@ -270,8 +293,8 @@ export const generatedRoadmapStyles = StyleSheet.create({
     paddingVertical: SPACING.md,
     paddingHorizontal: SPACING.lg,
     borderRadius: 12,
-    width: 180,
-    height: 80,
+    width: 200, // Aumentado para más espacio
+    minHeight: 90, // Cambiado a minHeight para permitir expansión
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 2,
@@ -281,8 +304,8 @@ export const generatedRoadmapStyles = StyleSheet.create({
     paddingVertical: SPACING.sm,
     paddingHorizontal: SPACING.md,
     borderRadius: 8,
-    width: 160,
-    height: 60,
+    width: 180, // Aumentado
+    minHeight: 70, // Cambiado a minHeight
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 2,
@@ -292,8 +315,8 @@ export const generatedRoadmapStyles = StyleSheet.create({
     paddingVertical: SPACING.sm,
     paddingHorizontal: SPACING.sm,
     borderRadius: 6,
-    width: 180,
-    height: 55,
+    width: 200, // Aumentado
+    minHeight: 65, // Cambiado a minHeight
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 2,
@@ -304,8 +327,8 @@ export const generatedRoadmapStyles = StyleSheet.create({
     fontFamily: FONTS.medium,
     color: '#000',
     textAlign: 'center',
-    flexWrap: 'wrap',
-    numberOfLines: 2,
+    flexWrap: 'wrap', // Permite que el texto haga wrap
+    flexShrink: 1, // Permite que el texto se ajuste
   },
 });
 

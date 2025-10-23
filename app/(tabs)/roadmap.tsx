@@ -383,11 +383,202 @@ export default function RoadmapScreen() {
     }
   };
 
+  // Función para navegar a roadmap de prueba
+  const handleTestRoadmap = () => {
+    const testData = {
+      roadmapTopics: JSON.stringify({
+        "Patrones de Arquitectura de Software": {
+          "Fundamentos y Patrones Clásicos": [
+            "Introducción a la Arquitectura de Software",
+            "Patrón en Capas (Layered Pattern)",
+            "Patrón Cliente-Servidor"
+          ],
+          "Patrones Orientados a Eventos": [
+            "Arquitectura Dirigida por Eventos (EDA)",
+            "Patrón de Sourcing de Eventos (Event Sourcing)",
+            "Patrón CQRS"
+          ],
+          "Patrones de Comunicación e Integración": [
+            "Patrón de Gateway de API (API Gateway)",
+            "Patrón de Strangler Fig",
+            "Patrón Anti-Corruption Layer"
+          ],
+          "Patrones de Presentación (UI)": [
+            "Modelo-Vista-Controlador (MVC)",
+            "Modelo-Vista-ViewModel (MVVM)",
+            "Patrón de Micro Frontends"
+          ],
+          "Patrones de Resiliencia y Escalabilidad": [
+            "Patrón Interruptor de Circuito (Circuit Breaker)",
+            "Patrón de Reintentos (Retry Pattern)",
+            "Patrón de Balanceo de Carga (Load Balancer)"
+          ],
+          "Patrones para Sistemas Distribuidos": [
+            "Arquitectura de Microservicios",
+            "Patrón de Broker de Mensajes (Message Broker)",
+            "Patrón Publicador-Suscriptor (Pub/Sub)"
+          ]
+        }
+      }),
+      roadmapInfo: JSON.stringify({
+        "Arquitectura Dirigida por Eventos (EDA)": {
+          "descripcion": "Un estilo de arquitectura de software que utiliza eventos para desencadenar y comunicar entre servicios desacoplados. Es común en aplicaciones modernas construidas con microservicios. Los componentes del sistema reaccionan a eventos a medida que ocurren.",
+          "link_real": "https://aws.amazon.com/es/event-driven-architecture/",
+          "tiempo_estimado": "2 horas"
+        },
+        "Arquitectura de Microservicios": {
+          "descripcion": "Enfoque arquitectónico que estructura una aplicación como una colección de servicios pequeños, autónomos y débilmente acoplados. Cada servicio es independiente, se centra en una capacidad de negocio y puede ser desplegado y escalado de forma individual.",
+          "link_real": "https://martinfowler.com/articles/microservices.html",
+          "tiempo_estimado": "2.5 horas"
+        },
+        "Fundamentos y Patrones Clásicos": {
+          "descripcion": "Exploración de los patrones arquitectónicos fundamentales que han servido como base para el desarrollo de software durante décadas. Estos patrones establecen los cimientos para entender estructuras más complejas y modernas.",
+          "link_real": "https://www.oreilly.com/library/view/software-architecture-patterns/9781491971437/",
+          "tiempo_estimado": "4-6 horas"
+        },
+        "Introducción a la Arquitectura de Software": {
+          "descripcion": "Define qué es la arquitectura de software, su importancia en el ciclo de vida del desarrollo y los conceptos clave como los atributos de calidad (o -ilities), las vistas arquitectónicas y el rol del arquitecto de software.",
+          "link_real": "https://es.wikipedia.org/wiki/Arquitectura_de_software",
+          "tiempo_estimado": "1 hora"
+        },
+        "Modelo-Vista-Controlador (MVC)": {
+          "descripcion": "Separa una aplicación en tres componentes interconectados: el Modelo (datos y lógica de negocio), la Vista (representación de la UI) y el Controlador (maneja la entrada del usuario y actualiza el Modelo y la Vista). Es un patrón fundamental en el desarrollo web y de escritorio.",
+          "link_real": "https://developer.mozilla.org/es/docs/Glossary/MVC",
+          "tiempo_estimado": "2 horas"
+        },
+        "Modelo-Vista-ViewModel (MVVM)": {
+          "descripcion": "Facilita la separación de la interfaz gráfica de usuario (la Vista) de la lógica de negocio y de presentación (el ViewModel). El ViewModel expone datos y comandos a los que la Vista se enlaza (data binding), reduciendo la necesidad de código de manipulación directa de la UI.",
+          "link_real": "https://learn.microsoft.com/es-es/dotnet/architecture/maui/mvvm",
+          "tiempo_estimado": "2 horas"
+        },
+        "Patrones Orientados a Eventos": {
+          "descripcion": "Paradigmas centrados en la producción, detección, consumo y reacción a eventos (cambios de estado significativos). Estas arquitecturas promueven sistemas asíncronos, escalables y altamente desacoplados.",
+          "link_real": "https://martinfowler.com/articles/201701-event-driven.html",
+          "tiempo_estimado": "6-8 horas"
+        },
+        "Patrones de Arquitectura de Software": {
+          "descripcion": "Estudio de los principios y soluciones estructurales de alto nivel para el diseño de sistemas de software. Abarca la organización de componentes, sus interrelaciones y las guías que gobiernan su diseño y evolución para cumplir con los atributos de calidad deseados (escalabilidad, rendimiento, mantenibilidad, etc.).",
+          "link_real": "https://learn.microsoft.com/es-es/azure/architecture/guide/",
+          "tiempo_estimado": "40-60 horas (curso completo)"
+        },
+        "Patrones de Comunicación e Integración": {
+          "descripcion": "Soluciones para facilitar la comunicación y la integración entre diferentes partes de un sistema o entre sistemas distintos, especialmente en contextos de microservicios, sistemas legados y aplicaciones distribuidas.",
+          "link_real": "https://www.enterpriseintegrationpatterns.com/patterns/messaging/",
+          "tiempo_estimado": "5-7 horas"
+        },
+        "Patrones de Presentación (UI)": {
+          "descripcion": "Modelos de diseño enfocados en la organización del código de la interfaz de usuario (UI) para mejorar la mantenibilidad, la testabilidad y la separación de responsabilidades entre la lógica de la vista y la lógica de negocio.",
+          "link_real": "https://addyosmani.com/resources/essentialjsdesignpatterns/book/#ui-patterns",
+          "tiempo_estimado": "5-7 horas"
+        },
+        "Patrones de Resiliencia y Escalabilidad": {
+          "descripcion": "Técnicas y diseños arquitectónicos cuyo objetivo es construir sistemas robustos capaces de soportar fallos (resiliencia) y de manejar un aumento en la carga de trabajo (escalabilidad) de manera eficiente.",
+          "link_real": "https://learn.microsoft.com/es-es/azure/architecture/framework/resiliency/design-patterns",
+          "tiempo_estimado": "5-7 horas"
+        },
+        "Patrones para Sistemas Distribuidos": {
+          "descripcion": "Conjunto de patrones diseñados para abordar los desafíos inherentes a los sistemas que se ejecutan en múltiples nodos de red, como la comunicación, la tolerancia a fallos, la consistencia de datos y la escalabilidad.",
+          "link_real": "https://aws.amazon.com/es/microservices/patterns/",
+          "tiempo_estimado": "6-8 horas"
+        },
+        "Patrón Anti-Corruption Layer": {
+          "descripcion": "Crea una capa de traducción entre un sistema nuevo y un sistema legado (o externo) para evitar que el modelo de dominio del sistema antiguo 'corrompa' o influya negativamente en el diseño del nuevo sistema. Esta capa aísla y adapta la comunicación entre ambos.",
+          "link_real": "https://learn.microsoft.com/es-es/azure/architecture/patterns/anti-corruption-layer",
+          "tiempo_estimado": "1.5 horas"
+        },
+        "Patrón CQRS": {
+          "descripcion": "Command Query Responsibility Segregation (Segregación de Responsabilidad de Comando y Consulta). Separa el modelo de datos para las operaciones de escritura (Comandos) del modelo para las operaciones de lectura (Consultas). Esto permite optimizar cada modelo de forma independiente.",
+          "link_real": "https://learn.microsoft.com/es-es/azure/architecture/patterns/cqrs",
+          "tiempo_estimado": "2.5 horas"
+        },
+        "Patrón Cliente-Servidor": {
+          "descripcion": "Modelo de aplicación distribuida que particiona las tareas entre los proveedores de un recurso o servicio, llamados servidores, y los solicitantes del servicio, llamados clientes. Es la base de la mayoría de las aplicaciones de red.",
+          "link_real": "https://developer.mozilla.org/es/docs/Learn/Server-side/First_steps/Client-Server_overview",
+          "tiempo_estimado": "1 hora"
+        },
+        "Patrón Interruptor de Circuito (Circuit Breaker)": {
+          "descripcion": "Evita que una aplicación intente ejecutar repetidamente una operación que es propensa a fallar. Tras un número configurable de fallos, el 'circuito se abre' y las llamadas subsiguientes fallan inmediatamente, evitando sobrecargar un servicio degradado.",
+          "link_real": "https://martinfowler.com/bliki/CircuitBreaker.html",
+          "tiempo_estimado": "2 horas"
+        },
+        "Patrón Publicador-Suscriptor (Pub/Sub)": {
+          "descripcion": "Patrón de mensajería donde los publicadores (emisores) no envían mensajes directamente a los suscriptores (receptores), sino que los categorizan en tópicos. Los suscriptores reciben todos los mensajes de los tópicos a los que están suscritos, permitiendo una comunicación uno a muchos y un gran desacoplamiento.",
+          "link_real": "https://cloud.google.com/pubsub/docs/overview?hl=es",
+          "tiempo_estimado": "2 horas"
+        },
+        "Patrón de Balanceo de Carga (Load Balancer)": {
+          "descripcion": "Distribuye el tráfico de red entrante entre un grupo de servidores (un 'pool' o 'farm') para mejorar la capacidad de respuesta y la disponibilidad de las aplicaciones. Asegura que ningún servidor se vea sobrecargado.",
+          "link_real": "https://www.cloudflare.com/es-es/learning/performance/what-is-load-balancing/",
+          "tiempo_estimado": "1.5 horas"
+        },
+        "Patrón de Broker de Mensajes (Message Broker)": {
+          "descripcion": "Utiliza un componente intermediario (el broker) para gestionar la comunicación asíncrona entre diferentes servicios. Los servicios envían mensajes a colas o tópicos en el broker, y otros servicios los consumen, desacoplando así al emisor del receptor.",
+          "link_real": "https://www.ibm.com/es-es/cloud/learn/message-brokers",
+          "tiempo_estimado": "2 horas"
+        },
+        "Patrón de Gateway de API (API Gateway)": {
+          "descripcion": "Actúa como un único punto de entrada para un conjunto de microservicios. Se encarga de enrutar las peticiones, componer respuestas, aplicar políticas de seguridad (autenticación, autorización), limitar tasas de peticiones (rate limiting) y realizar tareas de monitorización.",
+          "link_real": "https://aws.amazon.com/es/api-gateway/",
+          "tiempo_estimado": "2 horas"
+        },
+        "Patrón de Micro Frontends": {
+          "descripcion": "Extiende los conceptos de microservicios al frontend. Consiste en descomponer una aplicación web monolítica en piezas más pequeñas e independientes (micro frontends), que pueden ser desarrolladas, probadas y desplegadas de forma autónoma por diferentes equipos.",
+          "link_real": "https://martinfowler.com/articles/micro-frontends.html",
+          "tiempo_estimado": "2.5 horas"
+        },
+        "Patrón de Reintentos (Retry Pattern)": {
+          "descripcion": "Permite a una aplicación manejar fallos transitorios (temporales) al reintentar una operación que ha fallado. Se suele combinar con estrategias de espera exponencial (exponential backoff) para no saturar el servicio al que se llama.",
+          "link_real": "https://learn.microsoft.com/es-es/azure/architecture/patterns/retry",
+          "tiempo_estimado": "1.5 horas"
+        },
+        "Patrón de Sourcing de Eventos (Event Sourcing)": {
+          "descripcion": "En lugar de almacenar el estado actual de una entidad, se guarda la secuencia completa de eventos que han modificado su estado. El estado actual se puede reconstruir en cualquier momento reproduciendo los eventos, lo que proporciona un historial completo e inmutable.",
+          "link_real": "https://martinfowler.com/eaaDev/EventSourcing.html",
+          "tiempo_estimado": "2.5 horas"
+        },
+        "Patrón de Strangler Fig": {
+          "descripcion": "Estrategia para migrar gradualmente un sistema monolítico a una nueva arquitectura (como microservicios). Se crea una nueva fachada (la 'parra') que intercepta las peticiones, redirigiendo el tráfico a nuevas implementaciones o al antiguo monolito, 'estrangulando' progresivamente al sistema legado.",
+          "link_real": "https://martinfowler.com/bliki/StranglerFigApplication.html",
+          "tiempo_estimado": "2 horas"
+        },
+        "Patrón en Capas (Layered Pattern)": {
+          "descripcion": "Organiza el sistema en capas horizontales, donde cada capa tiene una responsabilidad específica (p. ej., Presentación, Lógica de Negocio, Acceso a Datos). Una capa solo puede comunicarse con la capa inmediatamente inferior, promoviendo la separación de conceptos.",
+          "link_real": "https://learn.microsoft.com/es-es/azure/architecture/patterns/n-tier",
+          "tiempo_estimado": "1.5 horas"
+        }
+      }),
+      relatedTopics: JSON.stringify({
+        "related_topics": [
+          "Arquitectura de Microservicios",
+          "Arquitectura Orientada a Eventos",
+          "Patrón CQRS y Event Sourcing",
+          "Arquitectura Monolítica vs Microservicios",
+          "Arquitectura Limpia y Hexagonal",
+          "Atributos de Calidad en Arquitectura"
+        ]
+      })
+    };
+
+    router.push({
+      pathname: '/generated-roadmap',
+      params: testData
+    });
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       {!showFileInfo ? (
         <View style={styles.roadmapContainer}>
           <Text style={styles.title}>Sube un archivo para generar tu ruta de aprendizaje</Text>
+          
+          {/* Botón de prueba - TEMPORAL para desarrollo */}
+          {/* <TouchableOpacity 
+            style={styles.testButton} 
+            onPress={handleTestRoadmap}
+          >
+            <Text style={styles.testButtonText}>Roadmap de Prueba</Text>
+          </TouchableOpacity> */}
+          
           <TouchableOpacity style={styles.fileUpload} onPress={handleFileUpload}>
             <Image 
               source={require('../../assets/images/archivo.png')} 

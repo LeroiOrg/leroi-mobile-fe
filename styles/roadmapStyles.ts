@@ -22,6 +22,21 @@ export const roadmapStyles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: SPACING.lg,
   },
+  testButton: {
+    backgroundColor: '#FFD700',
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.xl,
+    borderRadius: RADIUS.md,
+    marginBottom: SPACING.md,
+    borderWidth: 2,
+    borderColor: '#FFA500',
+  },
+  testButtonText: {
+    fontSize: FONT_SIZES.md,
+    fontFamily: FONTS.bold,
+    color: '#000',
+    textAlign: 'center',
+  },
   fileUpload: {
     alignItems: 'center',
     justifyContent: 'center',
