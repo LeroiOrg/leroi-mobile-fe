@@ -10,7 +10,16 @@
         "buildType": "apk"
       },
       "env": {
-        "NPM_CONFIG_LEGACY_PEER_DEPS": "true"
+        "NPM_CONFIG_LEGACY_PEER_DEPS": "true",
+        "EXPO_PUBLIC_BACKEND_URL": "https://leroi-gateway-dpmrnwaj.ue.gateway.dev",
+        "EXPO_PUBLIC_API_KEY": "AIzaSyC23cSLhu3-OemttZ1mZKKSpkoleI3INF4",
+        "EXPO_PUBLIC_FIREBASE_API_KEY": "AIzaSyDbUT2_AlOetbra8BtLnCQ_97wDCOeaTiQ",
+        "EXPO_PUBLIC_AUTH_DOMAIN": "leroi-1.firebaseapp.com",
+        "EXPO_PUBLIC_PROJECT_ID": "leroi-1",
+        "EXPO_PUBLIC_STORAGE_BUCKET": "leroi-1.firebasestorage.app",
+        "EXPO_PUBLIC_MESSAGING_SENDER_ID": "412989332451",
+        "EXPO_PUBLIC_APP_ID": "1:412989332451:web:65685d03775ca8fea25ed6",
+        "EXPO_PUBLIC_MEASUREMENT_ID": "G-6BKTN32LFJ"
       }
     },
     "preview": {
@@ -19,7 +28,16 @@
         "buildType": "apk"
       },
       "env": {
-        "NPM_CONFIG_LEGACY_PEER_DEPS": "true"
+        "NPM_CONFIG_LEGACY_PEER_DEPS": "true",
+        "EXPO_PUBLIC_BACKEND_URL": "https://leroi-gateway-dpmrnwaj.ue.gateway.dev",
+        "EXPO_PUBLIC_API_KEY": "AIzaSyC23cSLhu3-OemttZ1mZKKSpkoleI3INF4",
+        "EXPO_PUBLIC_FIREBASE_API_KEY": "AIzaSyDbUT2_AlOetbra8BtLnCQ_97wDCOeaTiQ",
+        "EXPO_PUBLIC_AUTH_DOMAIN": "leroi-1.firebaseapp.com",
+        "EXPO_PUBLIC_PROJECT_ID": "leroi-1",
+        "EXPO_PUBLIC_STORAGE_BUCKET": "leroi-1.firebasestorage.app",
+        "EXPO_PUBLIC_MESSAGING_SENDER_ID": "412989332451",
+        "EXPO_PUBLIC_APP_ID": "1:412989332451:web:65685d03775ca8fea25ed6",
+        "EXPO_PUBLIC_MEASUREMENT_ID": "G-6BKTN32LFJ"
       }
     },
     "production": {
@@ -27,7 +45,16 @@
         "buildType": "apk"
       },
       "env": {
-        "NPM_CONFIG_LEGACY_PEER_DEPS": "true"
+        "NPM_CONFIG_LEGACY_PEER_DEPS": "true",
+        "EXPO_PUBLIC_BACKEND_URL": "https://leroi-gateway-dpmrnwaj.ue.gateway.dev",
+        "EXPO_PUBLIC_API_KEY": "AIzaSyC23cSLhu3-OemttZ1mZKKSpkoleI3INF4",
+        "EXPO_PUBLIC_FIREBASE_API_KEY": "AIzaSyDbUT2_AlOetbra8BtLnCQ_97wDCOeaTiQ",
+        "EXPO_PUBLIC_AUTH_DOMAIN": "leroi-1.firebaseapp.com",
+        "EXPO_PUBLIC_PROJECT_ID": "leroi-1",
+        "EXPO_PUBLIC_STORAGE_BUCKET": "leroi-1.firebasestorage.app",
+        "EXPO_PUBLIC_MESSAGING_SENDER_ID": "412989332451",
+        "EXPO_PUBLIC_APP_ID": "1:412989332451:web:65685d03775ca8fea25ed6",
+        "EXPO_PUBLIC_MEASUREMENT_ID": "G-6BKTN32LFJ"
       }
     }
   },
