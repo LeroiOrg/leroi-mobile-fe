@@ -1,15 +1,23 @@
 {
   "expo": {
-    "name": "Leroi_Mobile",
+    "name": "Leroi",
     "slug": "leroi-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "leroimobile",
-    "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#040819",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.vanmo.leroimobile",
+      "icon": "./assets/images/icon.png",
+      "infoPlist": {
+        "CFBundleName": "Leroi",
+        "CFBundleDisplayName": "Leroi",
+        "UIStatusBarStyle": "UIStatusBarStyleLightContent",
+        "UIViewControllerBasedStatusBarAppearance": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -18,8 +26,17 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
+      "statusBar": {
+        "backgroundColor": "#040819",
+        "barStyle": "light-content"
+      },
+      "navigationBar": {
+        "visible": "leanback",
+        "backgroundColor": "transparent"
+      },
+      "softwareKeyboardLayoutMode": "pan",
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "package": "com.vanmo.leroimobile"
     },
     "web": {
       "output": "static",
@@ -47,9 +64,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "61be1e7d-b3d5-4e97-b310-cc4cf70ff53c"
+        "projectId": "07537a9e-1102-4931-86bd-5b0d2cb961ec"
       }
     },
-    "owner": "vanmo"
+    "owner": "leroi-mobile"
   }
 }
