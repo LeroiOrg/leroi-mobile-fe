@@ -5,9 +5,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { profileStyles as styles } from '../../styles/profileStyles';
 import { storage } from '../../utils/storage';
+import API_CONFIG, { buildURL, getHeaders } from '@/config/api';
 
-const API_BASE_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
-const API_KEY = process.env.EXPO_PUBLIC_API_KEY;
+const API_BASE_URL = API_CONFIG.baseURL;
+const API_KEY = API_CONFIG.apiKey;
 
 interface UserData {
   firstName: string;

@@ -5,9 +5,10 @@ import { router } from 'expo-router';
 import { roadmapStyles as styles } from '../../styles/roadmapStyles';
 import * as DocumentPicker from 'expo-document-picker';
 import { storage } from '../../utils/storage';
+import API_CONFIG, { buildURL, getHeaders } from '@/config/api';
 
-const API_KEY = process.env.EXPO_PUBLIC_API_KEY || '';
-const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
+const API_KEY = API_CONFIG.apiKey;
+const BACKEND_URL = API_CONFIG.baseURL;
 
 
 export default function RoadmapScreen() {

@@ -3,9 +3,10 @@ import { View, Text, TouchableOpacity, TextInput, ScrollView, Alert, Modal, Imag
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { registerStyles as styles } from '../styles/registerStyles';
+import API_CONFIG, { buildURL, getHeaders } from '@/config/api';
 
-const API_BASE_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
-const API_KEY = process.env.EXPO_PUBLIC_API_KEY;
+const API_BASE_URL = API_CONFIG.baseURL;
+const API_KEY = API_CONFIG.apiKey;
 
 export default function RegisterScreen() {
   const router = useRouter();
