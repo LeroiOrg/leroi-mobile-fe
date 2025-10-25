@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, SafeAreaView, TouchableOpacity, Image, Linking } from 'react-native';
+import { View, Text, ScrollView, SafeAreaView, TouchableOpacity, Image, Linking, StatusBar, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router, Stack } from 'expo-router';
 import { aboutStyles as styles } from '../styles/aboutStyles';
@@ -50,6 +50,11 @@ export default function AboutScreen() {
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
+      <StatusBar 
+        backgroundColor="#835BFC" 
+        barStyle="light-content"
+        translucent={false}
+      />
       <SafeAreaView style={styles.container}>
         {/* Header */}
         <View style={styles.header}>
