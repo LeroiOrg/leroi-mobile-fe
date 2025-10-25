@@ -25,8 +25,12 @@ const API_CONFIG = {
 if (__DEV__) {
   console.log('🌐 API Configuration:');
   console.log('  - Base URL:', API_CONFIG.baseURL);
+  console.log('  - API Key:', API_CONFIG.apiKey ? '***' + API_CONFIG.apiKey.slice(-4) : 'none');
   console.log('  - Platform:', Constants.platform);
   console.log('  - Device:', Constants.deviceName);
+} else {
+  // En producción también loggeamos para debugging del APK
+  console.log('🌐 API URL:', API_CONFIG.baseURL);
 }
 
 /**

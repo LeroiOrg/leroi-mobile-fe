@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 export default {
   expo: {
     name: "Leroi",
@@ -79,8 +81,8 @@ export default {
         projectId: "07537a9e-1102-4931-86bd-5b0d2cb961ec"
       },
       // Variables de entorno para la API
-      apiUrl: process.env.EXPO_PUBLIC_BACKEND_URL || "https://api-leroi.com",
-      apiKey: process.env.EXPO_PUBLIC_API_KEY || ""
+      apiUrl: process.env.EXPO_PUBLIC_BACKEND_URL || "https://leroi-gateway-dpmrnwaj.ue.gateway.dev",
+      apiKey: process.env.EXPO_PUBLIC_API_KEY || "AIzaSyC23cSLhu3-OemttZ1mZKKSpkoleI3INF4"
     },
     owner: "leroi-mobile"
   }
