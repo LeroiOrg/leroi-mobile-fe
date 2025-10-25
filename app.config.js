@@ -81,17 +81,17 @@ export default {
         projectId: "07537a9e-1102-4931-86bd-5b0d2cb961ec"
       },
       // Variables de entorno para la API Backend
-      apiUrl: process.env.EXPO_PUBLIC_BACKEND_URL || "https://leroi-gateway-dpmrnwaj.ue.gateway.dev",
-      apiKey: process.env.EXPO_PUBLIC_API_KEY || "AIzaSyC23cSLhu3-OemttZ1mZKKSpkoleI3INF4",
+      apiUrl: process.env.EXPO_PUBLIC_BACKEND_URL,
+      apiKey: process.env.EXPO_PUBLIC_API_KEY,
       
       // Variables de Firebase
-      firebaseApiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY || "AIzaSyDbUT2_AlOetbra8BtLnCQ_97wDCOeaTiQ",
-      firebaseAuthDomain: process.env.EXPO_PUBLIC_AUTH_DOMAIN || "leroi-1.firebaseapp.com",
-      firebaseProjectId: process.env.EXPO_PUBLIC_PROJECT_ID || "leroi-1",
-      firebaseStorageBucket: process.env.EXPO_PUBLIC_STORAGE_BUCKET || "leroi-1.firebasestorage.app",
-      firebaseMessagingSenderId: process.env.EXPO_PUBLIC_MESSAGING_SENDER_ID || "412989332451",
-      firebaseAppId: process.env.EXPO_PUBLIC_APP_ID || "1:412989332451:web:65685d03775ca8fea25ed6",
-      firebaseMeasurementId: process.env.EXPO_PUBLIC_MEASUREMENT_ID || "G-6BKTN32LFJ"
+      firebaseApiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
+      firebaseAuthDomain: process.env.EXPO_PUBLIC_AUTH_DOMAIN,
+      firebaseProjectId: process.env.EXPO_PUBLIC_PROJECT_ID,
+      firebaseStorageBucket: process.env.EXPO_PUBLIC_STORAGE_BUCKET,
+      firebaseMessagingSenderId: process.env.EXPO_PUBLIC_MESSAGING_SENDER_ID,
+      firebaseAppId: process.env.EXPO_PUBLIC_APP_ID,
+      firebaseMeasurementId: process.env.EXPO_PUBLIC_MEASUREMENT_ID
     },
     owner: "leroi-mobile"
   }
