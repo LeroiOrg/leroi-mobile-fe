@@ -12,32 +12,32 @@ const teamMembers = [
   },
   {
     name: 'Cristian Barrera',
-    github: 'https://github.com/Sebls',
+    github: 'https://github.com/CrisISyC',
     image: require('../assets/images/cris.jpg')
   },
   {
     name: 'Diego Alvarez',
-    github: 'https://github.com/CmilAmaya',
+    github: 'https://github.com/DiegoAlvarez147',
     image: require('../assets/images/diego.jpg')
   },
   {
     name: 'Duvan Mondragon',
-    github: 'https://github.com/amateusl',
+    github: 'https://github.com/dmondragonn',
     image: require('../assets/images/duvan.jpg')
   },
   {
     name: 'Jhoan Franco',
-    github: 'https://github.com/juarodriguezg',
+    github: 'https://github.com/JhoanSFranco',
     image: require('../assets/images/jhoan.jpg')
   },
   {
     name: 'Juan Ramirez',
-    github: 'https://github.com/juarodriguezg',
+    github: 'https://github.com/Juramirezlop',
     image: require('../assets/images/juan.jpg')
   },
   {
     name: 'Sergio Nova',
-    github: 'https://github.com/juarodriguezg',
+    github: 'https://github.com/snovap',
     image: require('../assets/images/nova.jpg')
   }
 ];

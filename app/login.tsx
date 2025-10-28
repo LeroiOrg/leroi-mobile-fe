@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { registerStyles as styles } from '../styles/registerStyles';
 import { storage } from '../utils/storage';
+import { persistentAuth } from '../utils/persistentAuth';
 import API_CONFIG, { buildURL, getHeaders } from '@/config/api';
 
 const API_BASE_URL = API_CONFIG.baseURL;
@@ -98,6 +99,14 @@ export default function LoginScreen() {
           await storage.setUserEmail(formData.email);
           await storage.set2FAStatus(false);
           await storage.setToken(token);
+          
+          // 🔐 Guardar credenciales cifradas para re-autenticación automática
+          await persistentAuth.saveCredentials(
+            formData.email,
+            formData.password,
+            false // No tiene 2FA
+          );
+          
           router.replace('/(tabs)');
         }
 
@@ -134,6 +143,13 @@ export default function LoginScreen() {
       const verifyCodeData = await verifyCodeResponse.json();
       const token = verifyCodeData.access_token;
       await storage.setToken(token);
+
+      // 🔐 Guardar credenciales cifradas (cuenta con 2FA)
+      await persistentAuth.saveCredentials(
+        userEmail,
+        formData.password,
+        true // Tiene 2FA activo
+      );
 
       setShowVerificationModal(false);
       router.replace('/(tabs)');

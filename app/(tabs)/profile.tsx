@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { profileStyles as styles } from '../../styles/profileStyles';
 import { storage } from '../../utils/storage';
+import { persistentAuth, persistentApiClient } from '../../utils/persistentAuth';
 import API_CONFIG, { buildURL, getHeaders } from '@/config/api';
 
 const API_BASE_URL = API_CONFIG.baseURL;
@@ -30,23 +31,9 @@ export default function ProfileScreen() {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const authToken = await storage.getToken();
-      
-      if (!authToken) {
-        router.replace('/login');
-        return;
-      }
-
       try {
         // Obtener los datos del usuario
-        const userResponse = await fetch(`${API_BASE_URL}/users_authentication_path/user-profile`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-            "Content-Type": "application/json",
-            'x-api-key': API_KEY || ''
-          },
-        });
+        const userResponse = await persistentApiClient.get('/users_authentication_path/user-profile');
 
         if (!userResponse.ok) {
           throw new Error("Error al obtener los datos del usuario");
@@ -64,14 +51,7 @@ export default function ProfileScreen() {
         setUserData(userDataWithCorrect2FA);
 
         // Obtener los roadmaps del usuario
-        const roadmapsResponse = await fetch(`${API_BASE_URL}/users_authentication_path/user-roadmaps`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-            "Content-Type": "application/json",
-            'x-api-key': API_KEY || ''
-          },
-        });
+        const roadmapsResponse = await persistentApiClient.get('/users_authentication_path/user-roadmaps');
 
         if (!roadmapsResponse.ok) {
           throw new Error("Error al obtener los roadmaps del usuario");
@@ -82,7 +62,10 @@ export default function ProfileScreen() {
 
       } catch (error) {
         console.error(error);
-        router.replace('/login');
+        const errorMessage = (error as Error).message;
+        if (errorMessage === 'No authenticated' || errorMessage === 'RE_AUTH_FAILED') {
+          router.replace('/login');
+        }
       }
     };
 
@@ -98,16 +81,8 @@ export default function ProfileScreen() {
   // Función para confirmar el cambio de 2FA
   const confirmToggle2FA = async () => {
     try {
-      const authToken = await storage.getToken();
-      
-      const response = await fetch(`${API_BASE_URL}/users_authentication_path/update-2fa`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${authToken}`,
-          'x-api-key': API_KEY || ''
-        },
-        body: JSON.stringify({ is_2fa_enabled: new2FAStatus }),
+      const response = await persistentApiClient.put('/users_authentication_path/update-2fa', {
+        is_2fa_enabled: new2FAStatus
       });
 
       if (!response.ok) {
@@ -131,24 +106,9 @@ export default function ProfileScreen() {
   };
 
   const confirmDelete = async () => {
-    const authToken = await storage.getToken();
-    
-    if (!authToken) {
-      router.replace('/login');
-      return;
-    }
-
     try {
-      const response = await fetch(
-        `${API_BASE_URL}/users_authentication_path/delete-user/${encodeURIComponent(userData?.email || '')}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-            "Content-Type": "application/json",
-            'x-api-key': API_KEY || ''
-          },
-        }
+      const response = await persistentApiClient.delete(
+        `/users_authentication_path/delete-user/${encodeURIComponent(userData?.email || '')}`
       );
 
       if (!response.ok) {
@@ -163,7 +123,7 @@ export default function ProfileScreen() {
 
       Alert.alert('Éxito', "Cuenta eliminada correctamente");
       setTimeout(async () => {
-        await storage.removeToken();
+        await persistentAuth.logout();
         router.replace('/login');
       }, 2000);
     } catch (error) {
@@ -183,22 +143,15 @@ export default function ProfileScreen() {
     };
 
     try {
-      const authToken = await storage.getToken();
-      
-      const response = await fetch(`${API_BASE_URL}/users_authentication_path/update-user`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${authToken}`,
-          'x-api-key': API_KEY || ''
-        },
-        body: JSON.stringify(trimmedData),
-      });
-
-      const result = await response.json();
+      const response = await persistentApiClient.put('/users_authentication_path/update-user', trimmedData);
 
       if (!response.ok) {
-        Alert.alert('Error', result.detail || "Error al actualizar los datos");
+        let errorMsg = "Error al actualizar los datos";
+        try {
+          const result = await response.json();
+          errorMsg = result.detail || errorMsg;
+        } catch {}
+        Alert.alert('Error', errorMsg);
         return;
       }
 
@@ -220,9 +173,8 @@ export default function ProfileScreen() {
         {
           text: 'Cerrar sesión',
           onPress: async () => {
-            await storage.removeToken();
-            await storage.removeUserEmail();
-            await storage.remove2FAStatus();
+            // 🔐 Logout completo - elimina tokens Y credenciales cifradas
+            await persistentAuth.logout();
             router.replace('/login');
           }
         }

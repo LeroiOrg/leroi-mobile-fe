@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
-import { validateToken } from '../utils/auth';
+import { persistentAuth } from '../utils/persistentAuth';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -12,10 +12,16 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const valid = await validateToken();
-      setIsValid(valid);
-      
-      if (!valid) {
+      try {
+        const token = await persistentAuth.getValidToken();
+        setIsValid(!!token);
+        
+        if (!token) {
+          router.replace('/login');
+        }
+      } catch (error) {
+        console.error('Error checking auth:', error);
+        setIsValid(false);
         router.replace('/login');
       }
     };

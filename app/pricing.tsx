@@ -6,6 +6,7 @@ import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { Picker } from '@react-native-picker/picker';
 import { pricingStyles as styles } from '../styles/pricingStyles';
 import { storage } from '../utils/storage';
+import { persistentAuth } from '../utils/persistentAuth';
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 const API_KEY = process.env.EXPO_PUBLIC_API_KEY;
@@ -136,11 +137,12 @@ export default function PricingScreen() {
     try {
       Alert.alert('Éxito', 'Redirigiendo a la plataforma de pago...');
 
-      const authToken = await storage.getToken();
+      const authToken = await persistentAuth.getValidToken();
       const userEmail = await storage.getUserEmail();
 
       if (!authToken || !userEmail) {
         Alert.alert('Error', 'No se encontró información de autenticación');
+        router.replace('/login');
         return;
       }
 

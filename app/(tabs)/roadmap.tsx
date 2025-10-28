@@ -5,6 +5,7 @@ import { router } from 'expo-router';
 import { roadmapStyles as styles } from '../../styles/roadmapStyles';
 import * as DocumentPicker from 'expo-document-picker';
 import { storage } from '../../utils/storage';
+import { persistentApiClient } from '../../utils/persistentAuth';
 import API_CONFIG, { buildURL, getHeaders } from '@/config/api';
 
 const API_KEY = API_CONFIG.apiKey;
@@ -47,29 +48,22 @@ export default function RoadmapScreen() {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const authToken = await storage.getToken();
-      if (!authToken) {
-        router.push('/login');
-        return;
-      }
-
       try {
-        const userResponse = await fetch(`${BACKEND_URL}/users_authentication_path/user-profile`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${authToken}`,
-            'Content-Type': 'application/json',
-            'x-api-key': API_KEY
-          } as HeadersInit,
-        });
+        const response = await persistentApiClient.get('/users_authentication_path/user-profile');
+        
+        if (!response.ok) {
+          throw new Error('Error al obtener los datos del usuario');
+        }
 
-        if (!userResponse.ok) throw new Error('Error al obtener los datos del usuario');
-
-        const userData = await userResponse.json();
+        const userData = await response.json();
         setUserData(userData.data);
       } catch (error) {
         console.error(error);
-        router.push('/login');
+        // Si falla, el persistentApiClient ya redirigió a login si es necesario
+        const errorMessage = (error as Error).message;
+        if (errorMessage === 'No authenticated' || errorMessage === 'RE_AUTH_FAILED') {
+          router.push('/login');
+        }
       }
     };
 
@@ -133,8 +127,8 @@ export default function RoadmapScreen() {
       setFileUploaded(file);
 
       const base64Data = await convertToBase64(file.uri || '');
-      const authToken = await storage.getToken();
-      const email = getEmailFromToken(authToken || '');
+      // Usar email de userData en lugar de extraerlo del token
+      const email = userData?.email;
 
       if (!email) {
         Alert.alert('Error', 'No se pudo obtener el correo del usuario.');
@@ -150,15 +144,7 @@ export default function RoadmapScreen() {
 
       setFileData(dataToSend);
 
-      const previewResponse = await fetch(`${BACKEND_URL}/files/cost-estimates`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Content-Type': 'application/json',
-          'x-api-key': API_KEY
-        } as HeadersInit,
-        body: JSON.stringify(dataToSend),
-      });
+      const previewResponse = await persistentApiClient.post('/files/cost-estimates', dataToSend);
 
       if (!previewResponse.ok) throw new Error('Error al obtener la vista previa de costos');
 
@@ -175,21 +161,14 @@ export default function RoadmapScreen() {
         Alert.alert('Error', 'Créditos Insuficientes 😔');
       }
 
-      fetch(`${BACKEND_URL}/files/analyses`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Content-Type': 'application/json'
-        } as HeadersInit,
-        body: JSON.stringify(dataToSend),
-      })
-      .then(response => response.json())
-      .then(result => {
-        if (result.has_virus) {
-          Alert.alert('Error', 'El archivo contiene virus. El usuario ha sido eliminado.');
-        }
-      })
-      .catch(error => console.error('Error al analizar el archivo:', error));
+      persistentApiClient.post('/files/analyses', dataToSend)
+        .then(response => response.json())
+        .then(result => {
+          if (result.has_virus) {
+            Alert.alert('Error', 'El archivo contiene virus. El usuario ha sido eliminado.');
+          }
+        })
+        .catch(error => console.error('Error al analizar el archivo:', error));
 
     } catch (error) {
       console.error('Error al obtener la vista previa de costos:', error);
@@ -217,18 +196,10 @@ export default function RoadmapScreen() {
     setLoadingText('Buscando temas relacionados... 📈🧠📚');
 
     try {
-      const authToken = await storage.getToken();
       console.log('🚀 URL que está usando:', `${BACKEND_URL}/learning_path/documents`);
       console.log('📦 Datos a enviar:', fileData);
       
-      const processResponse = await fetch(`${BACKEND_URL}/learning_path/documents`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Content-Type': 'application/json'
-        } as HeadersInit,
-        body: JSON.stringify(fileData),
-      });
+      const processResponse = await persistentApiClient.post('/learning_path/documents', fileData);
 
       console.log('📡 Response status:', processResponse.status);
       const responseText = await processResponse.text();
@@ -269,16 +240,10 @@ export default function RoadmapScreen() {
 
   const updateUserCredits = async (amount: number) => {
     try {
-      const authToken = await storage.getToken();
-      const response = await fetch(`${BACKEND_URL}/users_authentication_path/user-credits/${encodeURIComponent(userData?.email || '')}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authToken}`,
-          'x-api-key': API_KEY
-        } as HeadersInit,
-        body: JSON.stringify({ amount }),
-      });
+      const response = await persistentApiClient.patch(
+        `/users_authentication_path/user-credits/${encodeURIComponent(userData?.email || '')}`,
+        { amount }
+      );
 
       if (!response.ok) throw new Error('Error al actualizar los créditos del usuario');
 
@@ -316,17 +281,8 @@ export default function RoadmapScreen() {
     setLoadingText('Estamos creando tu ruta de aprendizaje 😁');
     
     try {
-      const authToken = await storage.getToken();
-      
       // Generate roadmap
-      const response = await fetch(`${BACKEND_URL}/learning_path/roadmaps`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authToken}`
-        } as HeadersInit,
-        body: JSON.stringify({ topic }),
-      });
+      const response = await persistentApiClient.post('/learning_path/roadmaps', { topic });
 
       if (!response.ok) throw new Error('Error al enviar el topic al backend');
 
@@ -343,14 +299,7 @@ export default function RoadmapScreen() {
       await updateUserCredits(-1);
 
       // Get related topics
-      const responseTopics = await fetch(`${BACKEND_URL}/learning_path/related-topics`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authToken}`
-        } as HeadersInit,
-        body: JSON.stringify({ topic }),
-      });
+      const responseTopics = await persistentApiClient.post('/learning_path/related-topics', { topic });
 
       let relatedTopics = [];
       if (responseTopics.ok) {
