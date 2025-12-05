@@ -9,6 +9,7 @@ import API_CONFIG, { buildURL, getHeaders } from '@/config/api';
 
 const API_BASE_URL = API_CONFIG.baseURL;
 const API_KEY = API_CONFIG.apiKey;
+const MOBILE_APP_KEY = API_CONFIG.mobileAppKey;
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -40,7 +41,8 @@ export default function LoginScreen() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': API_KEY || ''
+          'X-Api-Key': API_KEY || '',
+          'X-Mobile-App-Key': MOBILE_APP_KEY || ''
         },
         body: JSON.stringify({
           email: email,
@@ -71,7 +73,8 @@ export default function LoginScreen() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'x-api-key': API_KEY || ''
+            'X-Api-Key': API_KEY || '',
+            'X-Mobile-App-Key': MOBILE_APP_KEY || ''
           },
           body: JSON.stringify(formData)
         });
@@ -99,19 +102,6 @@ export default function LoginScreen() {
           await storage.setUserEmail(formData.email);
           await storage.set2FAStatus(false);
           await storage.setToken(token);
-<<<<<<< Updated upstream
-          
-          // 🔐 Guardar credenciales cifradas para re-autenticación automática
-          await persistentAuth.saveCredentials(
-            formData.email,
-            formData.password,
-            false // No tiene 2FA
-          );
-          
-=======
-          // Guardar credenciales cifradas para re-autenticación automática
-          await persistentAuth.saveCredentials(formData.email, formData.password, false);
->>>>>>> Stashed changes
           router.replace('/(tabs)');
         }
 
@@ -132,7 +122,8 @@ export default function LoginScreen() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': API_KEY || ''
+          'X-Api-Key': API_KEY || '',
+          'X-Mobile-App-Key': MOBILE_APP_KEY || ''
         },
         body: JSON.stringify({
           email: userEmail,
@@ -148,15 +139,6 @@ export default function LoginScreen() {
       const verifyCodeData = await verifyCodeResponse.json();
       const token = verifyCodeData.access_token;
       await storage.setToken(token);
-      // Guardar credenciales cifradas para re-autenticación automática
-      await persistentAuth.saveCredentials(formData.email, formData.password, true);
-
-      // 🔐 Guardar credenciales cifradas (cuenta con 2FA)
-      await persistentAuth.saveCredentials(
-        userEmail,
-        formData.password,
-        true // Tiene 2FA activo
-      );
 
       setShowVerificationModal(false);
       router.replace('/(tabs)');
@@ -199,7 +181,8 @@ export default function LoginScreen() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': API_KEY || ''
+          'X-Api-Key': API_KEY || '',
+          'X-Mobile-App-Key': MOBILE_APP_KEY || ''
         },
         body: JSON.stringify({ email: forgotPasswordEmail })
       });

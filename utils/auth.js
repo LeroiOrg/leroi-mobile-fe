@@ -2,6 +2,7 @@ import { storage } from './storage';
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 const API_KEY = process.env.EXPO_PUBLIC_API_KEY;
+const MOBILE_APP_KEY = process.env.EXPO_PUBLIC_MOBILE_APP_KEY;
 
 export const validateToken = async () => {
   try {
@@ -13,7 +14,8 @@ export const validateToken = async () => {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
-        'x-api-key': API_KEY || ''
+        'X-Api-Key': API_KEY || '',
+        'X-Mobile-App-Key': MOBILE_APP_KEY || ''
       },
     });
 

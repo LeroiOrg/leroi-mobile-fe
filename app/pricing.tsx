@@ -10,6 +10,7 @@ import { persistentAuth } from '../utils/persistentAuth';
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 const API_KEY = process.env.EXPO_PUBLIC_API_KEY;
+const MOBILE_APP_KEY = process.env.EXPO_PUBLIC_MOBILE_APP_KEY;
 
 export default function PricingScreen() {
   const params = useLocalSearchParams();
@@ -38,8 +39,9 @@ export default function PricingScreen() {
       const response = await fetch(`${API_BASE_URL}/payments-be`, {
         method: 'POST',
         headers: {
-          'Content-type': 'application/json',
-          'x-api-key': API_KEY || ''
+          'Content-Type': 'application/json',
+          'X-Api-Key': API_KEY || '',
+          'X-Mobile-App-Key': MOBILE_APP_KEY || ''
         },
         body: JSON.stringify({ query, variables }),
       });
@@ -106,7 +108,8 @@ export default function PricingScreen() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        'x-api-key': API_KEY || ''
+        'X-Api-Key': API_KEY || '',
+        'X-Mobile-App-Key': MOBILE_APP_KEY || ''
       },
       body: JSON.stringify({ query, variables }),
     });
@@ -189,7 +192,8 @@ export default function PricingScreen() {
         headers: {
           Authorization: `Bearer ${authToken}`,
           "Content-Type": "application/json",
-          'x-api-key': API_KEY || ''
+          'X-Api-Key': API_KEY || '',
+          'X-Mobile-App-Key': MOBILE_APP_KEY || ''
         },
         body: JSON.stringify({ query, variables }),
       });

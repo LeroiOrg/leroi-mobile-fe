@@ -83,6 +83,7 @@ export default {
       // Variables de entorno para la API Backend
       apiUrl: process.env.EXPO_PUBLIC_BACKEND_URL,
       apiKey: process.env.EXPO_PUBLIC_API_KEY,
+      mobileAppKey: process.env.EXPO_PUBLIC_MOBILE_APP_KEY,
       
       // Variables de Firebase
       firebaseApiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,

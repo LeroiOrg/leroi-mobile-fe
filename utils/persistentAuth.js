@@ -4,6 +4,7 @@ import API_CONFIG, { buildURL, getHeaders } from '@/config/api';
 
 const API_BASE_URL = API_CONFIG.baseURL;
 const API_KEY = API_CONFIG.apiKey;
+const MOBILE_APP_KEY = API_CONFIG.mobileAppKey;
 
 /**
  * Sistema de autenticación persistente con re-login automático
@@ -49,7 +50,8 @@ export const persistentAuth = {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': API_KEY
+          'X-Api-Key': API_KEY,
+          'X-Mobile-App-Key': MOBILE_APP_KEY
         },
         body: JSON.stringify({
           email: credentials.email,
@@ -131,7 +133,7 @@ export const persistentAuth = {
    * Elimina credenciales cifradas
    */
   async clearCredentials() {
-    await secureStorage.clearCredentials();
+    await secureStorage.deleteCredentials();
     
     if (__DEV__) {
       console.log('🗑️ Credenciales cifradas eliminadas');

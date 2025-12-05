@@ -5,11 +5,7 @@ import { router } from 'expo-router';
 import { roadmapStyles as styles } from '../../styles/roadmapStyles';
 import * as DocumentPicker from 'expo-document-picker';
 import { storage } from '../../utils/storage';
-<<<<<<< Updated upstream
-import { persistentApiClient } from '../../utils/persistentAuth';
-=======
-import { persistentAuth } from '../../utils/persistentAuth';
->>>>>>> Stashed changes
+import { persistentAuth, persistentApiClient } from '../../utils/persistentAuth';
 import API_CONFIG, { buildURL, getHeaders } from '@/config/api';
 
 const API_KEY = API_CONFIG.apiKey;
@@ -52,28 +48,12 @@ export default function RoadmapScreen() {
 
   useEffect(() => {
     const fetchUserData = async () => {
-<<<<<<< Updated upstream
       try {
         const response = await persistentApiClient.get('/users_authentication_path/user-profile');
         
         if (!response.ok) {
           throw new Error('Error al obtener los datos del usuario');
         }
-=======
-      const authToken = await persistentAuth.getValidToken();
-      if (!authToken) {
-        router.push('/login');
-        return;
-      }
-
-      try {
-        const userResponse = await fetch(`${BACKEND_URL}/users_authentication_path/user-profile`, {
-          method: 'GET',
-          headers: {
-            ...getHeaders(authToken)
-          } as HeadersInit,
-        });
->>>>>>> Stashed changes
 
         const userData = await response.json();
         setUserData(userData.data);
@@ -147,17 +127,11 @@ export default function RoadmapScreen() {
       setFileUploaded(file);
 
       const base64Data = await convertToBase64(file.uri || '');
-<<<<<<< Updated upstream
       // Usar email de userData en lugar de extraerlo del token
       const email = userData?.email;
-=======
-      const authToken = await persistentAuth.getValidToken();
-      const email = getEmailFromToken(authToken || '');
->>>>>>> Stashed changes
 
-      if (!email || !authToken) {
+      if (!email) {
         Alert.alert('Error', 'No se pudo obtener el correo del usuario.');
-        router.push('/login');
         return;
       }
 
@@ -170,17 +144,7 @@ export default function RoadmapScreen() {
 
       setFileData(dataToSend);
 
-<<<<<<< Updated upstream
       const previewResponse = await persistentApiClient.post('/files/cost-estimates', dataToSend);
-=======
-      const previewResponse = await fetch(`${BACKEND_URL}/files/cost-estimates`, {
-        method: 'POST',
-        headers: {
-          ...getHeaders(authToken)
-        } as HeadersInit,
-        body: JSON.stringify(dataToSend),
-      });
->>>>>>> Stashed changes
 
       if (!previewResponse.ok) throw new Error('Error al obtener la vista previa de costos');
 
@@ -232,31 +196,10 @@ export default function RoadmapScreen() {
     setLoadingText('Buscando temas relacionados... 📈🧠📚');
 
     try {
-<<<<<<< Updated upstream
       console.log('🚀 URL que está usando:', `${BACKEND_URL}/learning_path/documents`);
       console.log('📦 Datos a enviar:', fileData);
       
       const processResponse = await persistentApiClient.post('/learning_path/documents', fileData);
-=======
-      const authToken = await persistentAuth.getValidToken();
-      if (!authToken) {
-        Alert.alert('Error', 'Sesión expirada');
-        router.push('/login');
-        return;
-      }
-
-      if (__DEV__) {
-        console.log('📦 Enviando documento para procesamiento');
-      }
-      
-      const processResponse = await fetch(`${BACKEND_URL}/learning_path/documents`, {
-        method: 'POST',
-        headers: {
-          ...getHeaders(authToken)
-        } as HeadersInit,
-        body: JSON.stringify(fileData),
-      });
->>>>>>> Stashed changes
 
       console.log('📡 Response status:', processResponse.status);
       const responseText = await processResponse.text();
@@ -297,26 +240,10 @@ export default function RoadmapScreen() {
 
   const updateUserCredits = async (amount: number) => {
     try {
-<<<<<<< Updated upstream
       const response = await persistentApiClient.patch(
         `/users_authentication_path/user-credits/${encodeURIComponent(userData?.email || '')}`,
         { amount }
       );
-=======
-      const authToken = await persistentAuth.getValidToken();
-      if (!authToken) {
-        router.push('/login');
-        return;
-      }
-
-      const response = await fetch(`${BACKEND_URL}/users_authentication_path/user-credits/${encodeURIComponent(userData?.email || '')}`, {
-        method: 'PATCH',
-        headers: {
-          ...getHeaders(authToken)
-        } as HeadersInit,
-        body: JSON.stringify({ amount }),
-      });
->>>>>>> Stashed changes
 
       if (!response.ok) throw new Error('Error al actualizar los créditos del usuario');
 
@@ -354,26 +281,8 @@ export default function RoadmapScreen() {
     setLoadingText('Estamos creando tu ruta de aprendizaje 😁');
     
     try {
-<<<<<<< Updated upstream
       // Generate roadmap
       const response = await persistentApiClient.post('/learning_path/roadmaps', { topic });
-=======
-      const authToken = await persistentAuth.getValidToken();
-      if (!authToken) {
-        Alert.alert('Error', 'Sesión expirada');
-        router.push('/login');
-        return;
-      }
-      
-      // Generate roadmap
-      const response = await fetch(`${BACKEND_URL}/learning_path/roadmaps`, {
-        method: 'POST',
-        headers: {
-          ...getHeaders(authToken)
-        } as HeadersInit,
-        body: JSON.stringify({ topic }),
-      });
->>>>>>> Stashed changes
 
       if (!response.ok) throw new Error('Error al enviar el topic al backend');
 
