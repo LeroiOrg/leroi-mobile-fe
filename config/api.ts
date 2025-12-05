@@ -11,6 +11,9 @@ const API_CONFIG = {
   // API Key
   apiKey: Constants.expoConfig?.extra?.apiKey || process.env.EXPO_PUBLIC_API_KEY || '',
   
+  // Mobile App Key
+  mobileAppKey: Constants.expoConfig?.extra?.mobileAppKey || process.env.EXPO_PUBLIC_MOBILE_APP_KEY || '',
+  
   // Timeout por defecto (10 segundos)
   timeout: 10000,
   
@@ -26,6 +29,7 @@ if (__DEV__) {
   console.log('🌐 API Configuration:');
   console.log('  - Base URL:', API_CONFIG.baseURL);
   console.log('  - API Key:', API_CONFIG.apiKey ? '***' + API_CONFIG.apiKey.slice(-4) : 'none');
+  console.log('  - Mobile App Key:', API_CONFIG.mobileAppKey ? '***' + API_CONFIG.mobileAppKey.slice(-4) : 'none');
   console.log('  - Platform:', Constants.platform);
   console.log('  - Device:', Constants.deviceName);
 } else {
@@ -53,7 +57,11 @@ export const getHeaders = (token?: string): HeadersInit => {
   const headers: HeadersInit = { ...API_CONFIG.headers };
   
   if (API_CONFIG.apiKey) {
-    headers['x-api-key'] = API_CONFIG.apiKey;
+    headers['X-Api-Key'] = API_CONFIG.apiKey;
+  }
+  
+  if (API_CONFIG.mobileAppKey) {
+    headers['X-Mobile-App-Key'] = API_CONFIG.mobileAppKey;
   }
   
   if (token) {

@@ -292,11 +292,11 @@ export default function HomeScreen() {
               <Text style={styles.ctaButtonText}>{isAuthenticated ? "Generar ruta de aprendizaje" : "Sube tu primer documento"}</Text>
             </TouchableOpacity>
           </Link>
-          {/*
+          
           <TouchableOpacity style={styles.resetButton} onPress={resetSlideshow}>
             <Text style={styles.resetButtonText}>Ver slideshow nuevamente</Text>
           </TouchableOpacity>
-          
+          {/*
           <Link href="/payment-failure" asChild>
             <TouchableOpacity style={[styles.resetButton, { backgroundColor: '#ff6b6b', marginTop: 10 }]}>
               <Text style={styles.resetButtonText}>Ver página de fallo de pago</Text>

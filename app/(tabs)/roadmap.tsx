@@ -217,9 +217,15 @@ export default function RoadmapScreen() {
     setLoadingText('Buscando temas relacionados... 📈🧠📚');
 
     try {
+<<<<<<< Updated upstream
       const authToken = await storage.getToken();
       console.log('🚀 URL que está usando:', `${BACKEND_URL}/learning_path/documents`);
       console.log('📦 Datos a enviar:', fileData);
+=======
+      if (__DEV__) {
+        console.log('📦 Enviando documento para procesamiento');
+      }
+>>>>>>> Stashed changes
       
       const processResponse = await fetch(`${BACKEND_URL}/learning_path/documents`, {
         method: 'POST',
@@ -230,9 +236,10 @@ export default function RoadmapScreen() {
         body: JSON.stringify(fileData),
       });
 
-      console.log('📡 Response status:', processResponse.status);
+      if (__DEV__) {
+        console.log('📡 Response status:', processResponse.status);
+      }
       const responseText = await processResponse.text();
-      console.log('📄 Response text:', responseText);
 
       if (!processResponse.ok) {
         let errorMessage = 'Error del servidor';
@@ -249,12 +256,16 @@ export default function RoadmapScreen() {
       try {
         result = JSON.parse(responseText);
       } catch (parseError) {
-        console.error('❌ JSON Parse Error:', parseError);
-        console.error('📄 Raw response:', responseText);
+        console.error('❌ JSON Parse Error - respuesta no es JSON válido');
+        if (__DEV__) {
+          console.error('Parse error details:', parseError);
+        }
         throw new Error('La respuesta del servidor no es JSON válido');
       }
 
-      console.log('✅ Parsed result:', result);
+      if (__DEV__) {
+        console.log('✅ Temas recibidos:', result.themes?.length || 0);
+      }
       setTopics(result.themes || []);
       setShowTopicsModal(true);
 

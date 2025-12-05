@@ -8,6 +8,7 @@ import API_CONFIG, { buildURL, getHeaders } from '@/config/api';
 
 const API_BASE_URL = API_CONFIG.baseURL;
 const API_KEY = API_CONFIG.apiKey;
+const MOBILE_APP_KEY = API_CONFIG.mobileAppKey;
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -39,7 +40,8 @@ export default function LoginScreen() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': API_KEY || ''
+          'X-Api-Key': API_KEY || '',
+          'X-Mobile-App-Key': MOBILE_APP_KEY || ''
         },
         body: JSON.stringify({
           email: email,
@@ -70,7 +72,8 @@ export default function LoginScreen() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'x-api-key': API_KEY || ''
+            'X-Api-Key': API_KEY || '',
+            'X-Mobile-App-Key': MOBILE_APP_KEY || ''
           },
           body: JSON.stringify(formData)
         });
@@ -118,7 +121,8 @@ export default function LoginScreen() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': API_KEY || ''
+          'X-Api-Key': API_KEY || '',
+          'X-Mobile-App-Key': MOBILE_APP_KEY || ''
         },
         body: JSON.stringify({
           email: userEmail,
@@ -176,7 +180,8 @@ export default function LoginScreen() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': API_KEY || ''
+          'X-Api-Key': API_KEY || '',
+          'X-Mobile-App-Key': MOBILE_APP_KEY || ''
         },
         body: JSON.stringify({ email: forgotPasswordEmail })
       });
