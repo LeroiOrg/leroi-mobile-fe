@@ -99,6 +99,7 @@ export default function LoginScreen() {
           await storage.setUserEmail(formData.email);
           await storage.set2FAStatus(false);
           await storage.setToken(token);
+<<<<<<< Updated upstream
           
           // 🔐 Guardar credenciales cifradas para re-autenticación automática
           await persistentAuth.saveCredentials(
@@ -107,6 +108,10 @@ export default function LoginScreen() {
             false // No tiene 2FA
           );
           
+=======
+          // Guardar credenciales cifradas para re-autenticación automática
+          await persistentAuth.saveCredentials(formData.email, formData.password, false);
+>>>>>>> Stashed changes
           router.replace('/(tabs)');
         }
 
@@ -143,6 +148,8 @@ export default function LoginScreen() {
       const verifyCodeData = await verifyCodeResponse.json();
       const token = verifyCodeData.access_token;
       await storage.setToken(token);
+      // Guardar credenciales cifradas para re-autenticación automática
+      await persistentAuth.saveCredentials(formData.email, formData.password, true);
 
       // 🔐 Guardar credenciales cifradas (cuenta con 2FA)
       await persistentAuth.saveCredentials(
